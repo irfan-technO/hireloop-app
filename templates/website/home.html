@@ -749,216 +749,262 @@
 <div><div>
 
  
-<!-- ===================================================== -->
-<div id="aiAssistantWrapper" class="fixed top-24 right-6 z-[9999] font-sans flex flex-col items-end transition-all duration-500 ease-in-out">
+<!-- ================================================================= -->
+<!-- HIRELOOP AI ASSISTANT WIDGET (Hero Popup + Scroll Docking + Fixed Icons) -->
+<!-- ================================================================= -->
+<div id="aiAssistantWrapper" class="fixed top-28 right-6 z-[9999] font-sans flex flex-col items-end transition-all duration-700 ease-in-out">
+  
+  <!-- Onboarding Greeting Badge (Pops up on load) -->
+  <div id="aiGreetingPopup" class="mb-3 flex items-center gap-3 bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-indigo-500/50 backdrop-blur-md animate-bounce">
+    <div class="relative w-3 h-3">
+      <div class="absolute inset-0 rounded-full bg-emerald-400 animate-ping"></div>
+      <div class="absolute inset-0 rounded-full bg-emerald-500"></div>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-xs font-bold tracking-wide text-white">Hireloop AI Guide is ready! 👋</span>
+      <span class="text-[10px] text-indigo-200">Click below or ask any question.</span>
+    </div>
+    <button id="closePopupBtn" class="text-slate-400 hover:text-white text-base font-bold ml-2 px-1 transition">&times;</button>
+  </div>
+
+  <!-- Main AI Chat Box Panel -->
+  <div id="aiChatBox" class="flex flex-col w-[350px] sm:w-[380px] h-[500px] bg-slate-900/95 backdrop-blur-xl text-white rounded-3xl shadow-2xl border border-slate-700 overflow-hidden mb-3 transition-all duration-300 ease-out transform scale-100 opacity-100">
     
-    <!-- Ultra-Stylish AI Panel -->
-    <div id="aiChatBox" class="flex flex-col w-[350px] sm:w-[380px] h-[500px] bg-slate-900/95 backdrop-blur-xl text-white rounded-3xl shadow-[0_20px_50px_rgba(79,70,229,0.3)] border border-indigo-500/30 overflow-hidden transition-all duration-300">
-        
-        <!-- Header -->
-        <div class="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 shrink-0 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="relative w-9 h-9 rounded-2xl bg-white/20 flex items-center justify-center font-bold text-sm backdrop-blur-md border border-white/20 shadow-inner">
-                    <i class="fa-solid fa-wand-magic-sparkles text-white animate-pulse"></i>
-                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full"></span>
-                </div>
-                <div>
-                    <h3 class="font-bold text-xs tracking-wide text-white flex items-center gap-1.5">
-                        Hireloop AI Guide
-                        <span class="px-2 py-0.5 rounded-full text-[9px] bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-400/30">Active</span>
-                    </h3>
-                    <p class="text-[10px] text-indigo-100/90 font-medium">Smart Assistant & Platform Helper</p>
-                </div>
-            </div>
-
-            <!-- Visible & Stylish Close/Minimize Button -->
-            <button id="aiCloseBtn" title="Close AI Assistant" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white transition-all border border-white/20 shadow-sm cursor-pointer">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
+    <!-- Header Controls (Visible Close & Minimize Buttons) -->
+    <div class="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 shrink-0 border-b border-white/10 shadow-md">
+      <div class="flex items-center gap-3">
+        <div class="relative w-9 h-9 rounded-2xl bg-white/20 flex items-center justify-center font-bold text-sm backdrop-blur-md border border-white/30 shadow-inner">
+          <i class="fa-solid fa-wand-magic-sparkles text-white animate-pulse"></i>
+          <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full"></span>
         </div>
-
-        <!-- Chat History Area -->
-        <div id="aiChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-950/80 text-xs scroll-smooth">
-            <div class="flex items-start gap-2.5">
-                <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">AI</div>
-                <div class="p-3.5 rounded-2xl bg-slate-800/90 text-slate-100 shadow-sm max-w-[85%] leading-relaxed border border-slate-700/60">
-                    Hello! 👋 I'm your Hireloop AI Guide. What is your name, or how can I assist you with job searching or recruiting today?
-                </div>
-            </div>
+        <div>
+          <h3 class="font-bold text-sm tracking-wide text-white flex items-center gap-1.5">
+            Hireloop AI Guide
+            <span class="px-2 py-0.5 rounded-full text-[9px] bg-emerald-500/30 text-emerald-300 font-semibold border border-emerald-400/40">Active</span>
+          </h3>
+          <p class="text-[10px] text-indigo-100/90 font-medium">Smart Assistant & Platform Helper</p>
         </div>
+      </div>
 
-        <!-- Quick Guidance Action Chips -->
-        <div class="px-3 py-2 bg-slate-900/90 border-t border-slate-800/80 flex gap-1.5 overflow-x-auto shrink-0 no-scrollbar">
-            <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium transition-all border border-indigo-800/40 hover:scale-105" data-query="How do I search open jobs?">🔍 Search Jobs</button>
-            <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium transition-all border border-indigo-800/40 hover:scale-105" data-query="How do I post a job vacancy?">💼 Post Job</button>
-            <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium transition-all border border-indigo-800/40 hover:scale-105" data-query="Tell me about Hireloop portal">✨ About Platform</button>
-        </div>
-
-        <!-- Input Field -->
-        <div class="p-3 bg-slate-900 border-t border-slate-800/80 flex items-center gap-2 shrink-0">
-            <input type="text" id="aiUserInput" placeholder="Ask a question or type your name..." class="flex-1 px-4 py-2.5 bg-slate-800/90 rounded-2xl text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-slate-700/50">
-            <button id="aiSendBtn" class="w-10 h-10 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all shrink-0 shadow-lg active:scale-95 cursor-pointer">
-                <i class="fa-solid fa-paper-plane text-xs"></i>
-            </button>
-        </div>
+      <!-- Visible Close and Minimize Actions -->
+      <div class="flex items-center gap-2">
+        <button id="aiMinimizeBtn" type="button" title="Minimize Chat" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/35 active:scale-95 flex items-center justify-center text-white transition shadow">
+          <i class="fa-solid fa-minus text-xs font-bold"></i>
+        </button>
+        <button id="aiCloseBtn" type="button" title="Close AI Assistant" class="w-8 h-8 rounded-full bg-red-500/80 hover:bg-red-600 text-white active:scale-95 flex items-center justify-center transition shadow border border-red-400/40">
+          <i class="fa-solid fa-xmark text-sm font-bold"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- Floating Re-open Trigger Button -->
-    <button id="aiToggleBtn" class="hidden items-center gap-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-5 py-3 rounded-full shadow-[0_10px_25px_rgba(79,70,229,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 border border-indigo-400/30 cursor-pointer">
-        <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
-        <i class="fa-solid fa-robot text-base"></i>
-        <span class="text-xs font-bold tracking-wide">Ask AI Guide</span>
-    </button>
+    <!-- Chat Message Stream -->
+    <div id="aiChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-950/90 text-xs scroll-smooth">
+      <div class="flex items-start gap-2.5">
+        <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">AI</div>
+        <div class="p-3.5 rounded-2xl bg-slate-800/90 text-slate-100 shadow-sm max-w-[85%] leading-relaxed border border-slate-700">
+          Hello! 👋 I'm your <strong>Hireloop AI Guide</strong>. What is your name, or how can I assist you with job searching or recruiting today?
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Action Chips -->
+    <div class="px-3 py-2 bg-slate-900/90 border-t border-slate-800 flex gap-1.5 overflow-x-auto shrink-0 no-scrollbar">
+      <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium border border-indigo-700/60 transition flex items-center gap-1" data-query="where can I find jobs">
+        <i class="fa-solid fa-magnifying-glass text-[10px]"></i> Search Jobs
+      </button>
+      <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium border border-indigo-700/60 transition flex items-center gap-1" data-query="how to post a job">
+        <i class="fa-solid fa-briefcase text-[10px]"></i> Post Job
+      </button>
+      <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium border border-indigo-700/60 transition flex items-center gap-1" data-query="what is hireloop">
+        <i class="fa-solid fa-sparkles text-[10px]"></i> About Platform
+      </button>
+    </div>
+
+    <!-- Input Form Area -->
+    <div class="p-3 bg-slate-900 border-t border-slate-800 flex items-center gap-2 shrink-0">
+      <input type="text" id="aiUserInput" placeholder="Ask a question or type your name..." class="flex-1 px-4 py-2.5 bg-slate-800 rounded-2xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-slate-700 shadow-inner">
+      <button id="aiSendBtn" type="button" class="w-10 h-10 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center transition shadow-lg shadow-indigo-600/30 shrink-0">
+        <i class="fa-solid fa-paper-plane text-xs"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Floating Toggle Logo Button -->
+  <button id="aiToggleBtn" type="button" class="group relative w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 hover:scale-110 active:scale-95 text-white flex items-center justify-center shadow-2xl border-2 border-white/30 transition-all duration-300">
+    <span class="absolute -inset-1 rounded-full bg-indigo-500/40 blur-md group-hover:bg-purple-500/60 transition opacity-75 animate-pulse"></span>
+    <i class="fa-solid fa-wand-magic-sparkles text-xl relative z-10 transition-transform duration-300 group-hover:rotate-12"></i>
+    <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-emerald-400 border-2 border-slate-900 rounded-full z-20"></span>
+  </button>
 </div>
 
-<!-- Smart AI Controller & Dynamic Position Script -->
+<!-- Dynamic Scroll & ChatGPT/Gemini AI Script -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const wrapper = document.getElementById('aiAssistantWrapper');
-        const toggleBtn = document.getElementById('aiToggleBtn');
-        const closeBtn = document.getElementById('aiCloseBtn');
-        const chatBox = document.getElementById('aiChatBox');
-        const sendBtn = document.getElementById('aiSendBtn');
-        const userInput = document.getElementById('aiUserInput');
-        const chatMessages = document.getElementById('aiChatMessages');
-        const quickChips = document.querySelectorAll('.ai-quick-chip');
+document.addEventListener("DOMContentLoaded", function () {
+  const wrapper = document.getElementById('aiAssistantWrapper');
+  const toggleBtn = document.getElementById('aiToggleBtn');
+  const closeBtn = document.getElementById('aiCloseBtn');
+  const minimizeBtn = document.getElementById('aiMinimizeBtn');
+  const chatBox = document.getElementById('aiChatBox');
+  const greetingPopup = document.getElementById('aiGreetingPopup');
+  const closePopupBtn = document.getElementById('closePopupBtn');
+  const sendBtn = document.getElementById('aiSendBtn');
+  const userInput = document.getElementById('aiUserInput');
+  const chatMessages = document.getElementById('aiChatMessages');
+  const quickChips = document.querySelectorAll('.ai-quick-chip');
 
-        let userName = "";
+  let userName = "";
 
-        // Dynamic Scroll Positioning Engine
-        window.addEventListener('scroll', function () {
-            const scrollPos = window.scrollY;
-            const windowHeight = window.innerHeight;
-            const docHeight = document.body.offsetHeight;
+  // 1. Dynamic Scroll Positioning (Starts top-right next to Hero section, moves to bottom on scroll)
+  window.addEventListener('scroll', function () {
+    const scrollPos = window.scrollY;
+    
+    if (scrollPos > 120) {
+      // Move widget down to bottom-right corner when scrolling down
+      wrapper.classList.remove('top-28');
+      wrapper.classList.add('bottom-6');
+    } else {
+      // Return widget next to hero image when scrolled back to top
+      wrapper.classList.remove('bottom-6');
+      wrapper.classList.add('top-28');
+    }
+  });
 
-            // When scrolling near bottom, adjust position smoothly to bottom-right
-            if (scrollPos + windowHeight >= docHeight - 300) {
-                wrapper.classList.remove('top-24');
-                wrapper.classList.add('bottom-6');
-            } else {
-                wrapper.classList.remove('bottom-6');
-                wrapper.classList.add('top-24');
-            }
-        });
-
-        // Close / Minimize toggle actions
-        closeBtn.addEventListener('click', () => {
-            chatBox.classList.add('hidden');
-            toggleBtn.classList.remove('hidden');
-            toggleBtn.classList.add('flex');
-        });
-
-        toggleBtn.addEventListener('click', () => {
-            chatBox.classList.remove('hidden');
-            toggleBtn.classList.add('hidden');
-            toggleBtn.classList.remove('flex');
-            userInput.focus();
-            scrollToBottom();
-        });
-
-        function scrollToBottom() {
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 50);
-        }
-
-        function handleUserMessage(text) {
-            if (!text.trim()) return;
-
-            appendMessage(text, 'user');
-            userInput.value = '';
-
-            // Typing Indicator
-            const typingDiv = document.createElement('div');
-            typingDiv.id = 'aiTyping';
-            typingDiv.className = 'flex items-center gap-2 text-slate-400 text-[11px] pl-9 py-1';
-            typingDiv.innerHTML = '<i class="fa-solid fa-spinner animate-spin text-indigo-400"></i> AI is thinking...';
-            chatMessages.appendChild(typingDiv);
-            scrollToBottom();
-
-            setTimeout(() => {
-                const typingElem = document.getElementById('aiTyping');
-                if (typingElem) typingElem.remove();
-
-                let reply = processSmartReply(text);
-                appendMessage(reply, 'ai');
-            }, 500);
-        }
-
-        function appendMessage(text, sender) {
-            const isUser = sender === 'user';
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = `flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`;
-            
-            bubbleDiv.innerHTML = `
-                <div class="w-7 h-7 rounded-full ${isUser ? 'bg-indigo-500 text-white' : 'bg-indigo-600 text-white'} flex items-center justify-center shrink-0 font-bold text-xs shadow-md">
-                    ${isUser ? '<i class="fa-solid fa-user text-[10px]"></i>' : 'AI'}
-                </div>
-                <div class="p-3.5 rounded-2xl ${isUser ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800 text-slate-100 shadow-sm rounded-tl-none border border-slate-700/60'} max-w-[85%] leading-relaxed">
-                    ${text}
-                </div>
-            `;
-            chatMessages.appendChild(bubbleDiv);
-            scrollToBottom();
-        }
-
-        function processSmartReply(input) {
-            const text = input.trim();
-            const lower = text.toLowerCase();
-
-            // Name recognition pattern
-            if (lower.startsWith("my name is ") || lower.startsWith("i am ") || lower.startsWith("im ") || lower.startsWith("this is ")) {
-                const nameParts = text.split(/is |am |im |this is /i);
-                if (nameParts.length > 1) {
-                    userName = nameParts[1].trim().split(" ")[0];
-                    return `Nice to meet you, ${userName}! 😊 How can I assist you on Hireloop today? Are you looking for job opportunities or posting a vacancy?`;
-                }
-            }
-
-            // Greetings
-            if (lower === "hi" || lower === "hello" || lower === "hey" || lower === "hy") {
-                if (userName) {
-                    return `Hello ${userName}! 👋 What would you like to explore on Hireloop right now?`;
-                } else {
-                    return "Hello there! 👋 Welcome to Hireloop. What is your name, or how can I assist you with your job search today?";
-                }
-            }
-
-            // Job queries
-            if (lower.includes("job") || lower.includes("find") || lower.includes("search") || lower.includes("apply") || lower.includes("vacancy")) {
-                const namePrefix = userName ? `${userName}, ` : "";
-                return `${namePrefix}you can easily search for open positions using the main search bar on top, or head over to your Candidate Dashboard to view personalized matches! 🎯`;
-            }
-
-            // Recruiter queries
-            if (lower.includes("post") || lower.includes("hire") || lower.includes("recruiter") || lower.includes("candidate")) {
-                const namePrefix = userName ? `${userName}, ` : "";
-                return `${namePrefix}if you're hiring, log into your Recruiter Dashboard and click 'Post A New Job' to reach top candidate talent instantly! 💼`;
-            }
-
-            // Platform info
-            if (lower.includes("hireloop") || lower.includes("about") || lower.includes("what is this")) {
-                return "Hireloop is a next-generation career and internship portal connecting candidate talent with verified corporate recruiters and companies. 🚀";
-            }
-
-            if (userName) {
-                return `That's an interesting question, ${userName}! You can manage your applications, saved jobs, and recruiter messages seamlessly from your dashboard. Let me know if you need specific guidance!`;
-            }
-
-            return "Thanks for asking! Hireloop provides real-time job matching, candidate shortlisting, and dynamic recruiting analytics. Feel free to register or log in to get started!";
-        }
-
-        sendBtn.addEventListener('click', () => handleUserMessage(userInput.value));
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleUserMessage(userInput.value);
-        });
-
-        quickChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                handleUserMessage(chip.getAttribute('data-query'));
-            });
-        });
+  // 2. Popup Greeting Banner Auto-Dismiss
+  if (closePopupBtn) {
+    closePopupBtn.addEventListener('click', () => {
+      if (greetingPopup) greetingPopup.remove();
     });
+  }
+
+  // 3. Open / Close / Minimize Handlers
+  function openChat() {
+    if (greetingPopup) greetingPopup.remove();
+    chatBox.classList.remove('hidden');
+    setTimeout(() => {
+      chatBox.classList.remove('scale-95', 'opacity-0');
+      chatBox.classList.add('scale-100', 'opacity-100');
+    }, 10);
+    userInput.focus();
+    scrollToBottom();
+  }
+
+  function closeChat() {
+    chatBox.classList.remove('scale-100', 'opacity-100');
+    chatBox.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+      chatBox.classList.add('hidden');
+    }, 300);
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    if (chatBox.classList.contains('hidden')) openChat();
+    else closeChat();
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeChat);
+  if (minimizeBtn) minimizeBtn.addEventListener('click', closeChat);
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 50);
+  }
+
+  // 4. ChatGPT / Gemini Streaming Typewriter Animation
+  function streamAiReply(fullText) {
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = 'flex items-start gap-2.5';
+    bubbleDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">AI</div>
+      <div class="ai-stream-bubble p-3.5 rounded-2xl bg-slate-800/90 text-slate-100 rounded-tl-none border border-slate-700 shadow-sm max-w-[85%] leading-relaxed"></div>
+    `;
+    chatMessages.appendChild(bubbleDiv);
+    scrollToBottom();
+
+    const textContainer = bubbleDiv.querySelector('.ai-stream-bubble');
+    let index = 0;
+
+    function typeNextChar() {
+      if (index < fullText.length) {
+        textContainer.innerHTML = fullText.substring(0, index + 1);
+        index++;
+        scrollToBottom();
+        setTimeout(typeNextChar, 12);
+      }
+    }
+    typeNextChar();
+  }
+
+  // 5. User Query Handler
+  function handleUserMessage(text) {
+    if (!text.trim()) return;
+
+    const userDiv = document.createElement('div');
+    userDiv.className = 'flex items-start gap-2.5 flex-row-reverse';
+    userDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md"><i class="fa-solid fa-user text-[10px]"></i></div>
+      <div class="p-3.5 rounded-2xl bg-indigo-600 text-white rounded-tr-none shadow-sm max-w-[85%] leading-relaxed">${text}</div>
+    `;
+    chatMessages.appendChild(userDiv);
+    userInput.value = '';
+    scrollToBottom();
+
+    setTimeout(() => {
+      let reply = processSmartReply(text);
+      streamAiReply(reply);
+    }, 350);
+  }
+
+  // 6. Smart Response Generator
+  function processSmartReply(input) {
+    const text = input.trim();
+    const lower = text.toLowerCase();
+
+    if (lower.startsWith("my name is ") || lower.startsWith("i am ") || lower.startsWith("im ")) {
+      const parts = text.split(/is|am|im/i);
+      if (parts.length > 1) {
+        userName = parts[1].trim().split(" ")[0];
+        return `Pleased to meet you, <strong>${userName}</strong>! 🌟 How can I help you today? You can ask me how to search for jobs, post open roles, or manage candidate applications.`;
+      }
+    }
+
+    if (lower === "hi" || lower === "hello" || lower === "hey") {
+      const prefix = userName ? `Hello again, <strong>${userName}</strong>! ` : "Hello! ";
+      return `${prefix}How can I assist your career or recruiting workflow on Hireloop today?`;
+    }
+
+    if (lower.includes("job") || lower.includes("find") || lower.includes("search") || lower.includes("apply")) {
+      return `Here is how you can find opportunities on Hireloop:
+      <br>• Use the main <strong>Search Bar</strong> on top.
+      <br>• Explore job categories under <strong>Popular Job Categories</strong>.
+      <br>• Access your <strong>Candidate Dashboard</strong> for real-time tracking.`;
+    }
+
+    if (lower.includes("post") || lower.includes("hire") || lower.includes("recruiter") || lower.includes("candidate")) {
+      return `If you are looking to hire top talent:
+      <br>1. Log in to your account as a <strong>Recruiter</strong>.
+      <br>2. Navigate to your <strong>Recruiter Dashboard</strong>.
+      <br>3. Click <strong>'Post A New Job'</strong> to publish opportunities immediately!`;
+    }
+
+    if (lower.includes("hireloop") || lower.includes("about") || lower.includes("what is this")) {
+      return `<strong>Hireloop</strong> is an AI-powered job matching ecosystem designed to connect skilled candidates directly with verified hiring recruiters.`;
+    }
+
+    return `That's a great question${userName ? ', ' + userName : ''}! You can easily search open positions, manage job postings, or review applicant submissions using the top navigation bar.`;
+  }
+
+  sendBtn.addEventListener('click', () => handleUserMessage(userInput.value));
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleUserMessage(userInput.value);
+  });
+
+  quickChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      handleUserMessage(chip.getAttribute('data-query'));
+    });
+  });
+});
 </script>
 {% endblock %}
 
