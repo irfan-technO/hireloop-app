@@ -177,6 +177,8 @@
           ></i>
         </button>
 
+        
+
         <div
           class="flex items-center gap-3 pl-2 border-l border-slate-200 dark:border-slate-800"
         >
@@ -196,9 +198,15 @@
             >
               {{request.user.first_name|default:request.user.last_name|default:"username"}}
             </div>
-            <div class="text-xs text-slate-500 dark:text-slate-400">
-              Recruiter Admin
-            </div>
+            {% if request.user.is_recruiter  %}
+             <div class="text-xs text-slate-500 dark:text-slate-400">
+               Recruiter Admin
+             </div>
+            {% else %}
+             <div class="text-xs text-slate-500 dark:text-slate-400">
+               Candidate Admin
+             </div>
+            {% endif %}
           </div>
         </div>
       </div>
