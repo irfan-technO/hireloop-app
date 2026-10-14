@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block head_extra %}
+<style>
+    /* Scanning Radar Line Animation */
+    @keyframes radarScan {
+        0% { top: 0%; opacity: 0.8; }
+        50% { opacity: 1; }
+        100% { top: 100%; opacity: 0.8; }
+    }
+    .animate-radar-scan {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #6366f1, #a855f7, #6366f1, transparent);
+        box-shadow: 0 0 15px #6366f1, 0 0 30px #a855f7;
+        animation: radarScan 2s ease-in-out infinite alternate;
+    }
+    
+    /* Glowing Border Pulse for Active Scanning */
+    @keyframes pulseGlow {
+        0%, 100% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
+        50% { border-color: rgba(168, 85, 247, 0.9); box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); }
+    }
+    .scanning-active {
+        animation: pulseGlow 1.5s infinite;
+    }
+
+    /* Target Field Glow Effect when filled by AI */
+    .ai-filled-field {
+        transition: all 0.5s ease;
+        border-color: #10b981 !important;
+        background-color: rgba(16, 185, 129, 0.08) !important;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.25) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="p-6 sm:p-10 max-w-5xl mx-auto space-y-8">
+
+    <!-- Header Section -->
+    <div class="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md rounded-2xl p-6 border border-white/60 dark:border-slate-800 shadow-sm flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">Add Resume</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Fill in your details below to add your resume profile.</p>
+        </div>
+
+        {% if request.user.has_resume and request.user.resume %}
+            <a href="{% url 'resume-details' request.user.resume.pk %}" 
+               class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-800 hover:bg-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 transition">
+                Back to profile
+            </a>
+        {% else %}
+            <a href="{% url 'dashboard' %}" 
+               class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-800 hover:bg-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 transition">
+                Back to dashboard
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- AI 1-Click Resume Scanner Box -->
+    <div id="ai-scanner-card" class="relative overflow-hidden bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-blue-500/10 p-6 rounded-3xl border border-indigo-200/80 dark:border-indigo-800 space-y-4 transition-all">
+        <!-- Laser Scanning Line (Hidden until file selected) -->
+        <div id="radar-beam" class="hidden animate-radar-scan z-20 pointer-events-none"></div>
+
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 dark:text-white text-base">AI 1-Click Resume Autofill</h3>
+                    <p class="text-xs text-slate-500">Upload your PDF resume to auto-populate phone, experience, location, and bio below.</p>
+                </div>
+            </div>
+            <span id="ai-status" class="hidden px-3.5 py-1.5 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
+                Parsing...
+            </span>
+        </div>
+
+        <div class="relative border-2 border-dashed border-indigo-300 dark:border-indigo-700 hover:border-indigo-500 rounded-2xl p-6 text-center cursor-pointer bg-white/50 dark:bg-slate-800/50 transition-all group">
+            <input type="file" id="ai-resume-upload" accept=".pdf,.txt" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-30" />
+            
+            <div id="upload-default-prompt" class="space-y-2 pointer-events-none">
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400 mx-auto flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">Drop PDF Resume here or <span class="text-indigo-600 underline">Browse File</span></p>
+            </div>
+
+            <!-- Scanning Status Display Overlay -->
+            <div id="upload-scanning-prompt" class="hidden space-y-2 pointer-events-none">
+                <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 mx-auto flex items-center justify-center text-lg animate-spin">
+                    <i class="fa-solid fa-compact-disc"></i>
+                </div>
+                <p id="scanning-step-text" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 animate-pulse">Extracting Candidate Data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Form Container -->
+    <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-lg rounded-2xl p-6 sm:p-8 border border-white/80 dark:border-slate-800 shadow-md">
+
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl text-sm font-medium border {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border-emerald-200{% else %}bg-rose-50 text-rose-700 border-rose-200{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="resume-form" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Row 1: State & Country -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.state.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">State</label>
+                    {% render_field form.state class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                    {% if form.state.errors %}<p class="text-xs text-rose-500 mt-1">{{ form.state.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.country.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Country</label>
+                    {% render_field form.country class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                    {% if form.country.errors %}<p class="text-xs text-rose-500 mt-1">{{ form.country.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Row 2: Experience & Age -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.experience.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Experience</label>
+                    {% render_field form.experience class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                    {% if form.experience.errors %}<p class="text-xs text-rose-500 mt-1">{{ form.experience.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.age.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Age</label>
+                    {% render_field form.age placeholder="e.g. 25" class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                    {% if form.age.errors %}<p class="text-xs text-rose-500 mt-1">{{ form.age.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Row 3: Gender, Language, Education -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.gender.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Gender</label>
+                    {% render_field form.gender class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+                <div class="space-y-2">
+                    <label for="{{ form.language.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Language</label>
+                    {% render_field form.language class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+                <div class="space-y-2">
+                    <label for="{{ form.education_level.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Education Level</label>
+                    {% render_field form.education_level class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+            </div>
+
+            <!-- Row 4: School Name & Phone -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.school_name.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">School / Institution Name</label>
+                    {% render_field form.school_name placeholder="e.g. Stanford University" class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+                <div class="space-y-2">
+                    <label for="{{ form.phone_number.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Phone Number</label>
+                    {% render_field form.phone_number placeholder="e.g. +91 9876543210" class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+            </div>
+
+            <!-- Row 5: LinkedIn & Twitter -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.linkedin.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">LinkedIn Profile URL</label>
+                    {% render_field form.linkedin placeholder="https://linkedin.com/in/username" class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+                <div class="space-y-2">
+                    <label for="{{ form.twitter.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Twitter / X Profile URL</label>
+                    {% render_field form.twitter placeholder="https://x.com/username" class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+                </div>
+            </div>
+
+            <!-- Row 6: About Candidate -->
+            <div class="space-y-2">
+                <label for="{{ form.about_candidate.id_for_label }}" class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">About Candidate</label>
+                {% render_field form.about_candidate rows="4" class="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white transition-all" %}
+            </div>
+
+            <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-600/30 transition-all text-sm">
+                Save & Continue
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- PDF.js Engine & Advanced Scanning Script -->
+<!-- PDF.js Engine & Advanced Clean AI Scanning Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    document.getElementById('ai-resume-upload').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // UI Scanning Beam Controls
+        const radarBeam = document.getElementById('radar-beam');
+        const scannerCard = document.getElementById('ai-scanner-card');
+        const badge = document.getElementById('ai-status');
+        const defaultPrompt = document.getElementById('upload-default-prompt');
+        const scanningPrompt = document.getElementById('upload-scanning-prompt');
+        const scanningText = document.getElementById('scanning-step-text');
+
+        if (radarBeam) radarBeam.classList.remove('hidden');
+        if (scannerCard) scannerCard.classList.add('scanning-active');
+        if (badge) {
+            badge.classList.remove('hidden');
+            badge.innerText = 'Scanning PDF...';
+        }
+        if (defaultPrompt) defaultPrompt.classList.add('hidden');
+        if (scanningPrompt) scanningPrompt.classList.remove('hidden');
+
+        try {
+            if (scanningText) scanningText.innerText = 'Extracting Clean Text...';
+            let extractedText = "";
+
+            if (file.type === "application/pdf") {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    extractedText += content.items.map(item => item.str).join(" ") + " ";
+                }
+            } else {
+                extractedText = await file.text();
+            }
+
+            await new Promise(r => setTimeout(r, 500));
+            if (scanningText) scanningText.innerText = 'Parsing URLs & Education...';
+
+            // Helper to set values and trigger visual green highlight
+            function setAndHighlight(element, value) {
+                if (!element || !value) return;
+                element.value = value;
+                element.classList.add('ai-filled-field');
+                setTimeout(() => element.classList.remove('ai-filled-field'), 3500);
+            }
+
+            // Helper to match select options
+            function matchSelectOption(selectElem, searchKeywords) {
+                if (!selectElem) return;
+                for (let keyword of searchKeywords) {
+                    const lowerKey = keyword.toLowerCase();
+                    for (let option of selectElem.options) {
+                        if (option.value.toLowerCase() === lowerKey || option.text.toLowerCase().includes(lowerKey)) {
+                            selectElem.value = option.value;
+                            selectElem.classList.add('ai-filled-field');
+                            setTimeout(() => selectElem.classList.remove('ai-filled-field'), 3500);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // 1. Phone Number Extraction
+            const phoneMatch = extractedText.match(/(\+?\d{1,4}[\s-]?)?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}/);
+            const extractedPhone = phoneMatch ? phoneMatch[0].trim() : null;
+            setAndHighlight(document.querySelector('input[name="phone_number"]'), extractedPhone);
+
+            // 2. Flexible LinkedIn & Twitter Extraction (Handles links missing 'https://')
+            const linkedinMatch = extractedText.match(/(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+/i);
+            if (linkedinMatch) {
+                let linkedinUrl = linkedinMatch[0].trim();
+                if (!linkedinUrl.startsWith('http')) linkedinUrl = 'https://' + linkedinUrl;
+                setAndHighlight(document.querySelector('input[name="linkedin"]'), linkedinUrl);
+            }
+
+            const twitterMatch = extractedText.match(/(https?:\/\/)?(www\.)?(twitter|x)\.com\/[a-zA-Z0-9_-]+/i);
+            if (twitterMatch) {
+                let twitterUrl = twitterMatch[0].trim();
+                if (!twitterUrl.startsWith('http')) twitterUrl = 'https://' + twitterUrl;
+                setAndHighlight(document.querySelector('input[name="twitter"]'), twitterUrl);
+            }
+
+            // 3. School / Institution / University Extraction
+            const schoolMatch = extractedText.match(/(university|college|institute|school|academy|polytechnic)[^.,\n]*/i);
+            if (schoolMatch) {
+                setAndHighlight(document.querySelector('input[name="school_name"]'), schoolMatch[0].trim());
+            }
+
+            // 4. Age Extraction (Looks specifically for 2-digit age phrases like "22 years" or "age 22")
+            const ageMatch = extractedText.match(/\b(age|aged)?\s*([123][0-9])\s*(years|yrs)?\b/i);
+            if (ageMatch && ageMatch[2]) {
+                setAndHighlight(document.querySelector('input[name="age"]'), ageMatch[2]);
+            }
+
+            // 5. Clean "About Candidate" Summary (Strips out raw phone numbers, emails, and URLs)
+            let cleanedSummary = extractedText
+                .replace(/https?:\/\/\S+/gi, '') // Remove URLs
+                .replace(/(www\.)?\S+\.(com|org|net|in)\S*/gi, '') // Remove web domain paths
+                .replace(/[\w.-]+@[\w.-]+\.\w+/gi, '') // Remove Email addresses
+                .replace(/(\+?\d{1,4}[\s-]?)?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}/g, '') // Remove Phone Numbers
+                .replace(/\s+/g, ' ') // Collapse extra whitespace
+                .trim();
+
+            // Locate "Summary" or "Objective" keyword if present, otherwise grab the clean start
+            const summaryKeywordMatch = cleanedSummary.match(/(summary|objective|about me|profile)[:\s]+(.*)/i);
+            if (summaryKeywordMatch && summaryKeywordMatch[2]) {
+                cleanedSummary = summaryKeywordMatch[2].substring(0, 350).trim();
+            } else {
+                cleanedSummary = cleanedSummary.substring(0, 350).trim();
+            }
+
+            const aboutArea = document.querySelector('textarea[name="about_candidate"]');
+            if (aboutArea && cleanedSummary) {
+                setAndHighlight(aboutArea, cleanedSummary + "...");
+            }
+
+            // 6. Select Dropdowns (State, Country, Experience, Education)
+            const textLower = extractedText.toLowerCase();
+
+            if (textLower.includes("maharashtra") || textLower.includes("maharastra")) {
+                matchSelectOption(document.querySelector('select[name="state"]'), ["Maharastra", "Maharashtra"]);
+            }
+            if (textLower.includes("india")) {
+                matchSelectOption(document.querySelector('select[name="country"]'), ["India", "india"]);
+            }
+
+            // Education Level
+            if (textLower.includes("bachelor") || textLower.includes("bca") || textLower.includes("b.tech")) {
+                matchSelectOption(document.querySelector('select[name="education_level"]'), ["Bacholers", "Bachelors"]);
+            }
+
+            // Experience
+            if (textLower.includes("3-5") || textLower.includes("3 years") || textLower.includes("4 years")) {
+                matchSelectOption(document.querySelector('select[name="experience"]'), ["3-5"]);
+            } else {
+                matchSelectOption(document.querySelector('select[name="experience"]'), ["1-3"]);
+            }
+
+            // UI Finish
+            if (badge) {
+                badge.innerText = '✨ Autofill Completed!';
+                badge.className = 'px-3.5 py-1.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300';
+            }
+
+        } catch (err) {
+            console.error("AI Scanning error:", err);
+            if (badge) {
+                badge.innerText = 'Parsing Failed';
+                badge.className = 'px-3.5 py-1.5 text-xs font-semibold rounded-full bg-rose-100 text-rose-700';
+            }
+        } finally {
+            if (radarBeam) radarBeam.classList.add('hidden');
+            if (scannerCard) scannerCard.classList.remove('scanning-active');
+            if (defaultPrompt) defaultPrompt.classList.remove('hidden');
+            if (scanningPrompt) scanningPrompt.classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<style>
+    /* Styling & Custom Animations */
+    .jobs-page-wrapper {
+        background-color: #f8fafc;
+        min-height: 85vh;
+        padding: 40px 20px;
+    }
+
+    .jobs-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-title-section {
+        text-align: center;
+        margin-bottom: 35px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .page-title-section h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .filter-placeholder-card {
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 18px 24px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .job-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 24px;
+        margin-bottom: 50px;
+    }
+
+    .job-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        border-color: #cbd5e1;
+    }
+
+    .company-logo-placeholder {
+        width: 48px;
+        height: 48px;
+        background-color: #2563eb;
+        color: #ffffff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .job-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-top: 12px;
+        margin-bottom: 8px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .job-title:hover {
+        color: #2563eb;
+    }
+
+    .job-meta-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-bottom: 16px;
+    }
+
+    .job-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .badge-tag {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-blue { background-color: #eff6ff; color: #2563eb; }
+    .badge-green { background-color: #f0fdf4; color: #16a34a; }
+    .badge-orange { background-color: #fff7ed; color: #ea580c; }
+
+    .job-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 16px;
+        margin-top: auto;
+    }
+
+    .salary-text {
+        font-weight: 700;
+        color: #0f172a;
+        font-size: 1rem;
+    }
+
+    .btn-apply {
+        background-color: #2563eb;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: background 0.2s ease;
+    }
+
+    .btn-apply:hover {
+        background-color: #1d4ed8;
+    }
+
+    /* Start Recruiting Banner Section */
+    .recruiting-banner {
+        background-color: #eff6ff;
+        border-radius: 16px;
+        padding: 40px 32px;
+        margin-top: 40px;
+        animation: fadeInUp 0.7s ease-out;
+    }
+
+    .recruiting-banner h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+
+    .recruiting-banner p {
+        color: #64748b;
+        font-size: 0.95rem;
+        max-width: 500px;
+        margin-bottom: 24px;
+        line-height: 1.5;
+    }
+
+    .btn-recruiting {
+        background-color: #2563eb;
+        color: #ffffff;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.2s ease;
+    }
+
+    .btn-recruiting:hover {
+        background-color: #1d4ed8;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="jobs-page-wrapper">
+    <div class="jobs-container">
+
+        <!-- Title Section -->
+        <div class="page-title-section">
+            <h1>Available Jobs</h1>
+            <p class="text-muted">Explore active opportunities posted by top companies</p>
+        </div>
+
+        <!-- Filter Placeholder Area -->
+       <!-- Clean, Modern Filter Card -->
+<div style="background: #ffffff; padding: 18px 22px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);">
+    <form method="GET" action="{% url 'available_jobs' %}" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+        
+        <!-- Search Input -->
+        <div style="flex: 1 1 200px; min-width: 180px;">
+            <input type="text" name="search" placeholder="Search job title..." value="{{ search }}" 
+                   style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none;">
+        </div>
+
+        <!-- Location Dropdown -->
+        <div style="flex: 1 1 140px; min-width: 130px;">
+            <select name="job_location" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fff; outline: none;">
+                <option value="">All Locations</option>
+                <option value="On site" {% if selected_location == "On site" %}selected{% endif %}>On site</option>
+                <option value="Hybrid" {% if selected_location == "Hybrid" %}selected{% endif %}>Hybrid</option>
+                <option value="Remote" {% if selected_location == "Remote" %}selected{% endif %}>Remote</option>
+            </select>
+        </div>
+
+        <!-- Job Type Dropdown -->
+        <div style="flex: 1 1 140px; min-width: 130px;">
+            <select name="job_type" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fff; outline: none;">
+                <option value="">All Types</option>
+                <option value="Full Time" {% if selected_type == "Full Time" %}selected{% endif %}>Full Time</option>
+                <option value="Part Time" {% if selected_type == "Part Time" %}selected{% endif %}>Part Time</option>
+            </select>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div style="flex: 1 1 140px; min-width: 130px;">
+            <select name="job_cat" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fff; outline: none;">
+                <option value="">All Categories</option>
+                <option value="Permanant" {% if selected_cat == "Permanant" %}selected{% endif %}>Permanant</option>
+                <option value="Contract" {% if selected_cat == "Contract" %}selected{% endif %}>Contract</option>
+            </select>
+        </div>
+
+        <!-- Pay Mode Dropdown -->
+        <div style="flex: 1 1 140px; min-width: 130px;">
+            <select name="pay_mode" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fff; outline: none;">
+                <option value="">All Pay Rates</option>
+                <option value="Monthly" {% if selected_pay_mode == "Monthly" %}selected{% endif %}>Monthly</option>
+                <option value="Weekly" {% if selected_pay_mode == "Weekly" %}selected{% endif %}>Weekly</option>
+                <option value="Daily" {% if selected_pay_mode == "Daily" %}selected{% endif %}>Daily</option>
+            </select>
+        </div>
+
+        <!-- Submit & Reset Buttons -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="submit" style="padding: 8px 16px; font-size: 13px; font-weight: 500; color: #fff; background-color: #2563eb; border: none; border-radius: 8px; cursor: pointer;">
+                Filter
+            </button>
+            {% if search or selected_location or selected_type or selected_cat or selected_pay_mode %}
+                <a href="{% url 'available_jobs' %}" style="padding: 8px 12px; font-size: 13px; font-weight: 500; color: #64748b; background-color: #f1f5f9; text-decoration: none; border-radius: 8px;">
+                    Clear
+                </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Footer Stats -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; pt-3; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b;">
+        <span>Filter Opportunities</span>
+        <span style="background-color: #f8fafc; padding: 4px 10px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: 600; color: #334155;">
+            Showing {{ jobs.count }} Active Job{{ jobs.count|pluralize }}
+        </span>
+    </div>
+</div>
+
+        <!-- Job Cards Grid -->
+        <div class="job-grid">
+            {% for item in jobs %}
+            <div class="job-card">
+                <div>
+                    <!-- Header with Company Logo / Name -->
+                    <div class="d-flex align-items-center gap-3">
+                        {% if item.company.logo %}
+                            <img src="{{ item.company.logo.url }}" alt="{{ item.company.name }}" width="48" height="48" class="rounded">
+                        {% else %}
+                            <div class="company-logo-placeholder">
+                                {{ item.title|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <small class="text-muted fw-semibold">{{ item.company.name|default:"Recruiter" }}</small>
+                            <span class="d-block text-muted" style="font-size: 0.75rem;">
+                                Posted {{ item.date_time_posted|naturaltime }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Job Title -->
+                    <a href="{% url 'job-details' item.pk %}" class="job-title">
+                        {{ item.title }}
+                    </a>
+
+                    <!-- Job Meta Details -->
+                    <div class="job-meta-list">
+                        {% if item.job_location %}
+                            <span>📍 {{ item.job_location }}</span>
+                        {% endif %}
+                        {% if item.hours_per_week %}
+                            <span>⏱️ {{ item.hours_per_week }} hrs/week</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Job Type & Category Badges -->
+                    <div class="job-tags">
+                        {% if item.job_type %}
+                            <span class="badge-tag badge-blue">{{ item.job_type }}</span>
+                        {% endif %}
+                        {% if item.job_cat %}
+                            <span class="badge-tag badge-green">{{ item.job_cat }}</span>
+                        {% endif %}
+                        {% if item.pay_mode %}
+                            <span class="badge-tag badge-orange">{{ item.pay_mode }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Footer & Action -->
+                <div class="job-card-footer">
+                    <div class="salary-text">
+                        {% if item.pay %}
+                            ₹{{ item.pay|intcomma }} <small class="text-muted font-weight-normal" style="font-size: 0.75rem;">/ {{ item.pay_mode|default:"period" }}</small>
+                        {% else %}
+                            <small class="text-muted">Not specified</small>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'job-details' item.pk %}" class="btn-apply">View Details</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5 w-100" style="grid-column: 1 / -1;">
+                <h5 class="text-muted">No active jobs available at the moment.</h5>
+            </div>
+            {% endfor %}
+        </div>
+        </div> <!-- Closing tag of <div class="job-grid"> -->
+
+    <!-- Centered Tailwind Pagination Controls -->
+    {% if jobs.has_other_pages %}
+    <div style="display: flex; justify-content: center; align-items: center; margin: 32px 0; width: 100%;">
+        <nav style="display: inline-flex; align-items: center; gap: 6px; padding: 6px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            
+            <!-- Previous Button -->
+            {% if jobs.has_previous %}
+                <a href="?page={{ jobs.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if selected_location %}&job_location={{ selected_location }}{% endif %}{% if selected_type %}&job_type={{ selected_type }}{% endif %}{% if selected_cat %}&job_cat={{ selected_cat }}{% endif %}{% if selected_pay_mode %}&pay_mode={{ selected_pay_mode }}{% endif %}" 
+                   style="padding: 8px 14px; font-size: 12px; font-weight: 600; color: #475569; background-color: #f8fafc; text-decoration: none; border-radius: 10px; transition: all 0.2s;">
+                   &laquo; Prev
+                </a>
+            {% else %}
+                <span style="padding: 8px 14px; font-size: 12px; font-weight: 600; color: #cbd5e1; background-color: #f8fafc; border-radius: 10px; cursor: not-allowed;">&laquo; Prev</span>
+            {% endif %}
+
+            <!-- Page Number Links (1, 2, 3...) -->
+            {% for page_num in jobs.paginator.page_range %}
+                {% if jobs.number == page_num %}
+                    <span style="padding: 8px 14px; font-size: 12px; font-weight: 700; color: #ffffff; background-color: #4f46e5; border-radius: 10px; box-shadow: 0 2px 4px rgba(79,70,229,0.3);">
+                        {{ page_num }}
+                    </span>
+                {% else %}
+                    <a href="?page={{ page_num }}{% if search %}&search={{ search }}{% endif %}{% if selected_location %}&job_location={{ selected_location }}{% endif %}{% if selected_type %}&job_type={{ selected_type }}{% endif %}{% if selected_cat %}&job_cat={{ selected_cat }}{% endif %}{% if selected_pay_mode %}&pay_mode={{ selected_pay_mode }}{% endif %}" 
+                       style="padding: 8px 14px; font-size: 12px; font-weight: 600; color: #475569; text-decoration: none; border-radius: 10px; transition: all 0.2s;">
+                        {{ page_num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Next Button -->
+            {% if jobs.has_next %}
+                <a href="?page={{ jobs.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if selected_location %}&job_location={{ selected_location }}{% endif %}{% if selected_type %}&job_type={{ selected_type }}{% endif %}{% if selected_cat %}&job_cat={{ selected_cat }}{% endif %}{% if selected_pay_mode %}&pay_mode={{ selected_pay_mode }}{% endif %}" 
+                   style="padding: 8px 14px; font-size: 12px; font-weight: 600; color: #475569; background-color: #f8fafc; text-decoration: none; border-radius: 10px; transition: all 0.2s;">
+                   Next &raquo;
+                </a>
+            {% else %}
+                <span style="padding: 8px 14px; font-size: 12px; font-weight: 600; color: #cbd5e1; background-color: #f8fafc; border-radius: 10px; cursor: not-allowed;">Next &raquo;</span>
+            {% endif %}
+
+        </nav>
+    </div>
+    {% endif %}
+
+    <!-- Recruiting Section Banner -->
+       
+          
+
+        <!-- Recruiting Section Banner -->
+        <div class="recruiting-banner">
+            <h2>Recruiting?</h2>
+            <p>Advertise your jobs to millions of monthly users and search 15.8 million CVs in our database.</p>
+            <a href="{% url 'create-job' %}" class="btn-recruiting">Start Recruiting Now</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

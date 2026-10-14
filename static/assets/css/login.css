@@ -1,0 +1,292 @@
+/* ==========================================================================
+   Hireloop — Login Page
+   Place this file at: core/static/assets/css/login.css
+   ========================================================================== */
+
+:root {
+  --hl-blue-deep: #2E2FE0;
+  --hl-blue: #4547e8;
+  --hl-blue-light: #6c6ef0;
+  --hl-ink: #16172b;
+  --hl-grey: #6b7280;
+  --hl-field-bg: #f4f5f9;
+  --hl-border: #e7e8f1;
+  --hl-white: #ffffff;
+  --hl-radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  color: #16172b;
+}
+
+/* ---------- Top nav ---------- */
+.hl-nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 48px;
+  z-index: 5;
+}
+
+.hl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.hl-btn:hover { transform: translateY(-1px); }
+
+.hl-btn--ghost {
+  background: #eef0fc;
+  color: #2E2FE0;
+}
+.hl-btn--ghost:hover { background: #e2e5fb; }
+
+.hl-btn--solid {
+  background: #2E2FE0;
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(46,47,224,.55);
+}
+.hl-btn--solid:hover { background: #2323c9; }
+
+/* ---------- Page grid ---------- */
+.hl-login-wrap {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+}
+
+@media (max-width: 900px) {
+  .hl-login-wrap { grid-template-columns: 1fr; }
+  .hl-visual { display: none; }
+}
+
+/* ---------- Left: visual panel with full-bleed background video ---------- */
+.hl-visual {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px;
+  background: #1c1da3; /* shows briefly before the video paints, and if video fails to load */
+}
+
+/* the actual <video> element, filling the whole panel behind everything */
+.hl-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* tinted gradient so the logo/text/buttons stay readable over any footage,
+   and so the panel still reads as "Hireloop blue" rather than a random video */
+.hl-visual-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(28,29,163,.55) 0%, rgba(28,29,163,.35) 45%, rgba(15,16,90,.75) 100%);
+}
+
+.hl-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 48px;
+  z-index: 2;
+}
+.hl-logo-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #fff;
+  color: #2E2FE0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.hl-visual-copy {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  max-width: 420px;
+}
+.hl-visual-copy h2 {
+  font-size: 28px;
+  line-height: 1.3;
+  margin: 0 0 12px;
+}
+.hl-visual-copy p {
+  color: rgba(255,255,255,.85);
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ---------- Right: form panel ---------- */
+.hl-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: #ffffff;
+}
+
+.hl-form-card { width: 100%; max-width: 400px; }
+
+.hl-form-card h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 28px;
+}
+
+/* ---------- Candidate / Employer tabs (register page) ---------- */
+.hl-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.hl-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: #eafaf1;
+  color: #16a34a;
+  transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+}
+.hl-tab svg { width: 15px; height: 15px; }
+.hl-tab--active {
+  background: #16a34a;
+  color: #fff;
+  box-shadow: 0 10px 20px -10px rgba(22,163,74,.55);
+}
+.hl-tab:not(.hl-tab--active):hover { background: #def7e9; }
+
+.hl-field { margin-bottom: 20px; }
+.hl-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #16172b;
+}
+.hl-field input[type="text"],
+.hl-field input[type="email"],
+.hl-field input[type="password"] {
+  width: 100%;
+  padding: 13px 16px;
+  background: #f4f5f9;
+  border: 1px solid #f4f5f9;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s ease, background .15s ease;
+}
+.hl-field input:focus {
+  background: #fff;
+  border-color: #6c6ef0;
+}
+
+.hl-row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+.hl-remember { display: flex; align-items: center; gap: 8px; color: #6b7280; }
+.hl-remember input { accent-color: #2E2FE0; }
+.hl-forgot { color: #2E2FE0; text-decoration: none; font-weight: 600; }
+.hl-forgot:hover { text-decoration: underline; }
+
+.hl-submit {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #2E2FE0;
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -10px rgba(46,47,224,.6);
+  transition: background .15s ease, transform .15s ease;
+}
+.hl-submit:hover { background: #2323c9; transform: translateY(-1px); }
+
+.hl-signup-hint {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  margin: 18px 0;
+}
+.hl-signup-hint a { color: #2E2FE0; font-weight: 600; text-decoration: none; }
+.hl-signup-hint a:hover { text-decoration: underline; }
+
+.hl-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #a8abbd;
+  font-size: 12px;
+  margin: 20px 0;
+}
+.hl-divider::before, .hl-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e7e8f1;
+}
+
+.hl-social { display: flex; gap: 12px; }
+.hl-social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e7e8f1;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #16172b;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.hl-social-btn:hover { background: #f7f7fb; }
+.hl-social-btn svg { width: 16px; height: 16px; }

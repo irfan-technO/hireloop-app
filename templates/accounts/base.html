@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hireloop | Login</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* Preloader Styles */
+        #hl-preloader {
+            position: fixed;
+            inset: 0;
+            background-color: #0b1739;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #hl-preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .hl-loader-icon {
+            width: 52px;
+            height: 52px;
+            background: #4f46e5;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 26px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            z-index: 2;
+        }
+
+        .hl-loader-ring {
+            position: absolute;
+            width: 76px;
+            height: 76px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            animation: hl-spin 0.8s linear infinite;
+        }
+
+        @keyframes hl-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-video-overlay {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(79, 70, 229, 0.4) 100%);
+            backdrop-filter: blur(3px);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 font-sans min-h-screen text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Preloader -->
+    <div id="hl-preloader">
+        <div class="relative flex items-center justify-center">
+            <div class="hl-loader-icon">H</div>
+            <div class="hl-loader-ring"></div>
+        </div>
+    </div>
+
+    <!-- Main Fluid Layout -->
+    <div class="min-h-screen w-full flex items-center justify-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black">
+        
+        <div class="w-full max-w-6xl min-h-[620px] grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden shadow-2xl border border-white/10 glass-card p-2 gap-2">
+            
+            <!-- LEFT PANEL: Video Hero Container with Curved Edges -->
+            <div class="lg:col-span-6 relative rounded-2xl overflow-hidden min-h-[350px] lg:min-h-[580px] flex flex-col justify-between p-8 lg:p-12 text-white">
+                
+                <!-- Background Video -->
+                <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover scale-105">
+                    <source src="{% static 'assets/video/about_showcase.mp4' %}" type="video/mp4">
+                </video>
+
+                <!-- Gradient Overlay -->
+                <div class="absolute inset-0 glass-video-overlay"></div>
+
+                <!-- Content Layer -->
+                <div class="relative z-10 flex items-center justify-between">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold flex items-center justify-center text-xl shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
+                            H
+                        </div>
+                        <span class="text-2xl font-bold tracking-tight text-white">Hireloop</span>
+                    </a>
+                </div>
+
+                <div class="relative z-10 space-y-4 my-auto py-8">
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
+                        Find the right people for the <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-200">right role.</span>
+                    </h1>
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-md font-normal">
+                        Thousands of candidates and recruiters connect on Hireloop every day.
+                    </p>
+                </div>
+
+                <div class="relative z-10 text-xs text-slate-300 font-medium">
+                    &copy; 2026 Hireloop Inc. All rights reserved.
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Glass Login Card -->
+            <div class="lg:col-span-6 flex flex-col justify-center p-6 sm:p-10 lg:p-12 bg-white/80 rounded-2xl backdrop-blur-md">
+                <div class="max-w-md w-full mx-auto">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Preloader Script -->
+    <script>
+        function hidePreloader() {
+            const preloader = document.getElementById("hl-preloader");
+            if (preloader) preloader.classList.add("fade-out");
+        }
+        window.addEventListener("load", hidePreloader);
+        setTimeout(hidePreloader, 1500);
+    </script>
+</body>
+</html>

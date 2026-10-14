@@ -1,0 +1,993 @@
+
+{% extends "website/base.html" %}
+{% load static %}
+{% load humanize%}
+{% block title %}Hireloop | Find Jobs & Talent{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+
+  <!-- ============ HERO ============ -->
+  <section class="hero reveal">
+    <div class="container hero-grid">
+
+      <div class="hero-copy">
+        <h1>There Are <span class="accent">{{ open_jobs_count|default:"12,480" }}</span> Postings Here For You!</h1>
+        <p>Find jobs, internships and career opportunities across every industry — all in one place.</p>
+
+        <form class="search-card" method="get" action="/job/available-jobs/">
+          <div class="search-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" name="title" placeholder="Job title, keywords, or company">
+          </div>
+          <div class="search-divider"></div>
+          <div class="search-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input type="text" name="job_location" placeholder="City or postcode">
+          </div>
+          <button type="submit" class="hl-btn hl-btn--solid">Find Jobs</button>
+        </form>
+
+        <p class="popular-line"><strong>Popular Searches:</strong> Designer, Developer, Web, PHP, Senior, Engineer</p>
+      </div>
+
+     
+     <!-- Visual panel: Interactive Search & Apply Animated Card -->
+<div class="hero-visual" id="heroVisual">
+  <div class="animated-job-card">
+    <!-- Animated UI Header -->
+    <div class="app-window-header">
+      <div class="window-dots">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <div class="window-title">Hireloop Portal Simulation</div>
+    </div>
+
+    <!-- Live Animated Search Bar -->
+    <div class="simulated-search">
+      <div class="sim-input">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span class="typing-text"></span>
+      </div>
+      <span class="sim-location">📍 Remote / Pune</span>
+      <button class="sim-btn">Searching...</button>
+    </div>
+
+    <!-- Animated Job Listing Result Card -->
+    <div class="simulated-job-item">
+      <div class="job-item-header">
+        <div class="company-logo-avatar">H</div>
+        <div>
+          <h4>Senior Python / Full-Stack Developer</h4>
+          <p>Hireloop Tech Inc. • Full-time</p>
+        </div>
+      </div>
+      <div class="job-tags">
+        <span>$90k - $120k</span>
+        <span>Remote</span>
+        <span>Urgent</span>
+      </div>
+      <div class="apply-status-container">
+        <div class="animated-progress-bar"></div>
+        <div class="status-badge">Applying...</div>
+      </div>
+    </div>
+
+    <!-- Floating Stats Badges -->
+    <div class="hero-stat-badge badge-top-right">
+      <div class="badge-icon">💼</div>
+      <div>
+        <strong>12,480+</strong>
+        <span>Live Opportunities</span>
+      </div>
+    </div>
+
+    <div class="hero-stat-badge badge-bottom-left">
+      <div class="avatar-group">
+        <span class="avatar">👨‍💻</span>
+        <span class="avatar">👩‍💼</span>
+        <span class="avatar">👨‍🎨</span>
+      </div>
+      <div>
+        <strong>10k+ Candidates</strong>
+        <span>Hired this month</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+  <!-- =========== POPULAR CATEGORIES & FEATURED JOBS SECTION =========== -->
+<style>
+  /* Ensure main section containers span full width stacked vertically */
+  .home-sections-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    padding: 3rem 0;
+  }
+
+  .home-section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .section-head {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-head h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e1b4b;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-head p {
+    color: #64748b;
+    font-size: 1rem;
+  }
+
+  /* Popular Categories Grid Fix */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .category-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #ffffff;
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+
+  .category-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4f46e5;
+  }
+
+  .category-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .category-info h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 0.25rem 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .category-info p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  /* Featured Jobs Grid Fix */
+  .job-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .job-card {
+    display: flex;
+    gap: 1rem;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+
+  .job-logo {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 10px;
+    background: #4f46e5;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .job-info {
+    flex: 1;
+  }
+
+  .job-info h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .job-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+  }
+
+  .job-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .job-meta svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .job-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .job-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .job-tag--blue { background: #e0e7ff; color: #3730a3; }
+  .job-tag--green { background: #dcfce7; color: #166534; }
+  .job-tag--peach { background: #ffedd5; color: #9a3412; }
+
+  /* Load More Jobs Button Container */
+  .load-more-container {
+    text-align: center;
+    margin-top: 2.5rem;
+  }
+
+  .btn-load-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 2rem;
+    background-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  }
+
+  .btn-load-more:hover {
+    background-color: #4338ca;
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="home-sections-wrapper">
+
+  <!-- POPULAR CATEGORIES -->
+  <section class="home-section-container">
+    <div class="section-head">
+      <h2>Popular Job Categories</h2>
+      <p>Browse jobs by the field you know best.</p>
+    </div>
+
+    <div class="category-grid">
+      {% for cat in categories %}
+        <a href="/job/available-jobs/?title={{ cat.name }}" class="category-card">
+          <div class="category-icon">{{ cat.icon|safe }}</div>
+          <div class="category-info">
+            <h4>{{ cat.name }}</h4>
+            <p>{{ cat.count }} open positions</p>
+          </div>
+        </a>
+      {% empty %}
+        <a href="#" class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          </div>
+          <div class="category-info">
+            <h4>Development</h4>
+            <p>Full stack, backend, mobile</p>
+          </div>
+        </a>
+
+        <a href="#" class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle></svg>
+          </div>
+          <div class="category-info">
+            <h4>Design</h4>
+            <p>Product, UI/UX, brand</p>
+          </div>
+        </a>
+
+        <a href="#" class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-2-8-9-3z"></path></svg>
+          </div>
+          <div class="category-info">
+            <h4>Marketing</h4>
+            <p>Growth, content, SEO</p>
+          </div>
+        </a>
+
+        <a href="#" class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle></svg>
+          </div>
+          <div class="category-info">
+            <h4>Accounting / Finance</h4>
+            <p>Analysis, audit, tax</p>
+          </div>
+        </a>
+
+        <a href="#" class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div class="category-info">
+            <h4>Human Resources</h4>
+            <p>Recruiting, people ops</p>
+          </div>
+        </a>
+
+        <a href="#" class="category-card">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18a9 9 0 0 1 18 0"></path></svg>
+          </div>
+          <div class="category-info">
+            <h4>Customer Service</h4>
+            <p>Support, success</p>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- FEATURED JOBS -->
+  <section class="home-section-container">
+    <div class="section-head">
+      <h2>Featured Jobs</h2>
+      <p>Know your worth and find the job that fits your life.</p>
+    </div>
+
+    <div class="job-grid">
+      {% for job in jobs %}
+        <a href="{% url "job-details" job.pk %}" class="job-card">
+          <div class="job-logo">{{ job.company_name|slice:":1"|default:"H" }}</div>
+          <div class="job-info">
+            <h4>{{ job.title }}</h4>
+            <div class="job-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path></svg> {{ job.job_location }}</span>
+              <span>{{ job.pay }} INR </span>
+              <span>{{job.date_time_posted|naturaltime}}</span>
+            </div>
+            <div class="job-tags">
+              <span class="job-tag job-tag--blue">{{ job.job_type }}</span>
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <a href="#" class="job-card">
+          <div class="job-logo">H</div>
+          <div class="job-info">
+            <h4>Senior Product Designer</h4>
+            <div class="job-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path></svg> Lagos, Nigeria</span>
+              <span>₦900,000</span>
+            </div>
+            <div class="job-tags">
+              <span class="job-tag job-tag--blue">Full Time</span>
+              <span class="job-tag job-tag--green">Hybrid</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="job-card">
+          <div class="job-logo">H</div>
+          <div class="job-info">
+            <h4>Backend Engineer (Django)</h4>
+            <div class="job-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path></svg> Remote</span>
+              <span>₦1,200,000</span>
+            </div>
+            <div class="job-tags">
+              <span class="job-tag job-tag--blue">Full Time</span>
+              <span class="job-tag job-tag--peach">Remote</span>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- LOAD MORE JOBS BUTTON -->
+    <div class="load-more-container">
+      <a href="{% url "available_jobs" %}" class="btn-load-more">
+        Load More Jobs
+      </a>
+    </div>
+  </section>
+
+</div>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>What People Say About Hireloop</h2>
+        <p>A few words from candidates and employers who found what they needed.</p>
+      </div>
+      <!-- ==========================================
+     1. HOW HIRELOOP WORKS SECTION
+     ========================================== -->
+<section class="section reveal reveal-zoom" style="background-color: #f8fafc; padding: 60px 0; margin-top: 40px; border-radius: 20px;">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 28px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">How Hireloop Works</h2>
+      <p style="color: #64748b;">Get hired or build your dream team in 3 simple steps</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+      <!-- Step 1 -->
+      <div class="step-card reveal reveal-left" style="background: #ffffff; padding: 28px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: center;">
+        <div style="width: 50px; height: 50px; background: #e0e7ff; color: #4338ca; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px font-weight: 700; font-size: 20px;">1</div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Create Account</h3>
+        <p style="color: #64748b; font-size: 14px; line-height: 1.5;">Sign up as a job candidate or recruiter in less than 2 minutes.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card reveal" style="background: #ffffff; padding: 28px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: center;">
+        <div style="width: 50px; height: 50px; background: #e0e7ff; color: #4338ca; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-weight: 700; font-size: 20px;">2</div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Apply or Post Jobs</h3>
+        <p style="color: #64748b; font-size: 14px; line-height: 1.5;">Browse verified job listings or post open roles to top tier candidates.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card reveal reveal-right" style="background: #ffffff; padding: 28px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: center;">
+        <div style="width: 50px; height: 50px; background: #e0e7ff; color: #4338ca; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-weight: 700; font-size: 20px;">3</div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Get Hired / Hire Talent</h3>
+        <p style="color: #64748b; font-size: 14px; line-height: 1.5;">Connect directly, schedule interviews, and finalize offers seamlessly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== 7. TOP COMPANIES HIRING SECTION =========== -->
+<!-- Close hero/parallax container divs to stop mouse cursor movement from affecting this section -->
+</div></div></div></div>
+
+<style>
+  /* Base Layout Isolator */
+  .hl-clean-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    clear: both !important;
+    display: block !important;
+    box-sizing: border-box;
+    margin: 0 auto;
+    transform: none !important; /* Disables any inherited mouse parallax */
+  }
+
+  .hl-container-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    box-sizing: border-box;
+  }
+
+  /* 1. Trusted Companies Ticker */
+  .company-ticker {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 1rem 0;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+
+  .company-track {
+    display: flex;
+    gap: 3.5rem;
+    width: max-content;
+    animation: marquee-scroll 22s linear infinite;
+  }
+
+  .company-track:hover {
+    animation-play-state: paused;
+  }
+
+  .company-brand {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .company-brand:hover {
+    color: #4f46e5;
+    transform: scale(1.05);
+  }
+
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* 2. CTA Section + Heading Animation */
+  .cta-band-custom {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    border-radius: 20px;
+    padding: 3.5rem 2rem;
+    color: #ffffff;
+    box-shadow: 0 15px 35px -10px rgba(79, 70, 229, 0.35);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .cta-content-inner {
+    max-width: 650px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Smooth Fade & Slide Animation for Heading */
+  .cta-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+    animation: ctaTextAppear 1s ease-out forwards;
+  }
+
+  @keyframes ctaTextAppear {
+    0% {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .cta-subtitle {
+    font-size: 1rem;
+    color: #e0e7ff;
+    margin-bottom: 1.75rem;
+    line-height: 1.5;
+  }
+
+  .cta-action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .btn-cta-primary {
+    background-color: #ffffff;
+    color: #4f46e5;
+    font-weight: 700;
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-cta-primary:hover {
+    background-color: #f8fafc;
+    transform: translateY(-2px);
+  }
+
+  .btn-cta-secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.8rem 1.75rem;
+    border-radius: 10px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .btn-cta-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .cta-stats-row {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1.25rem;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .cta-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-stat-num {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .cta-stat-lbl {
+    font-size: 0.75rem;
+    color: #c7d2fe;
+  }
+</style>
+
+<!-- TRUSTED COMPANIES SECTION -->
+<div class="hl-clean-block">
+  <div class="hl-container-inner" style="text-align: center;">
+    <p style="text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; font-size: 0.8rem; color: #64748b; margin-bottom: 1.25rem;">
+      Trusted by Leading Companies Worldwide
+    </p>
+
+    <div class="company-ticker">
+      <div class="company-track">
+        <!-- Set 1 -->
+        <span class="company-brand">Google</span>
+        <span class="company-brand">Microsoft</span>
+        <span class="company-brand">Spotify</span>
+        <span class="company-brand">Slack</span>
+        <span class="company-brand">Zoom</span>
+        <span class="company-brand">Amazon</span>
+        <span class="company-brand">Meta</span>
+        <span class="company-brand">Netflix</span>
+
+        <!-- Set 2 -->
+        <span class="company-brand">Google</span>
+        <span class="company-brand">Microsoft</span>
+        <span class="company-brand">Spotify</span>
+        <span class="company-brand">Slack</span>
+        <span class="company-brand">Zoom</span>
+        <span class="company-brand">Amazon</span>
+        <span class="company-brand">Meta</span>
+        <span class="company-brand">Netflix</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CALL TO ACTION SECTION -->
+<div class="hl-clean-block">
+  <div class="hl-container-inner">
+    <div class="cta-band-custom">
+      <div class="cta-content-inner">
+        <h3 class="cta-title">Ready to find your next hire — or your next role?</h3>
+        <p class="cta-subtitle">
+          Join thousands of candidate profiles and verified companies actively hiring on Hireloop.
+        </p>
+
+        <div class="cta-action-buttons">
+          <a href="/accounts/register_candidate/" class="btn-cta-primary">Explore Open Jobs</a>
+          <a href="/accounts/register_recruiter/" class="btn-cta-secondary">Post a Job</a>
+        </div>
+
+        <div class="cta-stats-row">
+          <div class="cta-stat-item">
+            <span class="cta-stat-num">10k+</span>
+            <span class="cta-stat-lbl">Active Jobs</span>
+          </div>
+          <div class="cta-stat-item">
+            <span class="cta-stat-num">5k+</span>
+            <span class="cta-stat-lbl">Companies</span>
+          </div>
+          <div class="cta-stat-item">
+            <span class="cta-stat-num">98%</span>
+            <span class="cta-stat-lbl">Placement Rate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Re-open wrapper structure for footer -->
+<div><div>
+
+  Here is the complete, redesigned Hireloop AI Assistant Widget.What Has Been Fixed & Upgraded:Visible & Modern Close / Minimize Button: Added a crisp, high-contrast close button (✕ icon) at the top right of the header with clear hover effects so it is immediately visible and easy to click.   Ultra-Stylish Modern Glassmorphism Design: Replaced the plain dark box with a modern SaaS aesthetic featuring a dark glassmorphism card (backdrop-blur-xl), animated gradient glowing borders, pill action buttons, and styled AI/user chat avatars.Smooth Floating & Scroll Adjustment:Starts floating prominently on the right side of the page on initial load.As you scroll down the website, it smoothly moves with the viewport and smoothly dock-anchors to the bottom-right side near the footer so it never overlaps main page content.   Smart AI Logic & Memory: Remembers user names (e.g., "Irfan"), handles greetings dynamically, and gives accurate answers regarding job searches, posting vacancies, and candidate shortlisting.Updated Code for templates/website/home.htmlReplace your existing AI Assistant code at the bottom of templates/website/home.html with this exact code:HTML<!-- ===================================================== -->
+<!-- STYLISH FLOATING HIRELOOP AI ASSISTANT WIDGET         -->
+<!-- ===================================================== -->
+<div id="aiAssistantWrapper" class="fixed top-24 right-6 z-[9999] font-sans flex flex-col items-end transition-all duration-500 ease-in-out">
+    
+    <!-- Ultra-Stylish AI Panel -->
+    <div id="aiChatBox" class="flex flex-col w-[350px] sm:w-[380px] h-[500px] bg-slate-900/95 backdrop-blur-xl text-white rounded-3xl shadow-[0_20px_50px_rgba(79,70,229,0.3)] border border-indigo-500/30 overflow-hidden transition-all duration-300">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 shrink-0 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="relative w-9 h-9 rounded-2xl bg-white/20 flex items-center justify-center font-bold text-sm backdrop-blur-md border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-wand-magic-sparkles text-white animate-pulse"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xs tracking-wide text-white flex items-center gap-1.5">
+                        Hireloop AI Guide
+                        <span class="px-2 py-0.5 rounded-full text-[9px] bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-400/30">Active</span>
+                    </h3>
+                    <p class="text-[10px] text-indigo-100/90 font-medium">Smart Assistant & Platform Helper</p>
+                </div>
+            </div>
+
+            <!-- Visible & Stylish Close/Minimize Button -->
+            <button id="aiCloseBtn" title="Close AI Assistant" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 flex items-center justify-center text-white transition-all border border-white/20 shadow-sm cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Chat History Area -->
+        <div id="aiChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-950/80 text-xs scroll-smooth">
+            <div class="flex items-start gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">AI</div>
+                <div class="p-3.5 rounded-2xl bg-slate-800/90 text-slate-100 shadow-sm max-w-[85%] leading-relaxed border border-slate-700/60">
+                    Hello! 👋 I'm your Hireloop AI Guide. What is your name, or how can I assist you with job searching or recruiting today?
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Guidance Action Chips -->
+        <div class="px-3 py-2 bg-slate-900/90 border-t border-slate-800/80 flex gap-1.5 overflow-x-auto shrink-0 no-scrollbar">
+            <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium transition-all border border-indigo-800/40 hover:scale-105" data-query="How do I search open jobs?">🔍 Search Jobs</button>
+            <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium transition-all border border-indigo-800/40 hover:scale-105" data-query="How do I post a job vacancy?">💼 Post Job</button>
+            <button class="ai-quick-chip shrink-0 px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 text-[11px] font-medium transition-all border border-indigo-800/40 hover:scale-105" data-query="Tell me about Hireloop portal">✨ About Platform</button>
+        </div>
+
+        <!-- Input Field -->
+        <div class="p-3 bg-slate-900 border-t border-slate-800/80 flex items-center gap-2 shrink-0">
+            <input type="text" id="aiUserInput" placeholder="Ask a question or type your name..." class="flex-1 px-4 py-2.5 bg-slate-800/90 rounded-2xl text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-slate-700/50">
+            <button id="aiSendBtn" class="w-10 h-10 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-all shrink-0 shadow-lg active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Re-open Trigger Button -->
+    <button id="aiToggleBtn" class="hidden items-center gap-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-5 py-3 rounded-full shadow-[0_10px_25px_rgba(79,70,229,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 border border-indigo-400/30 cursor-pointer">
+        <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></span>
+        <i class="fa-solid fa-robot text-base"></i>
+        <span class="text-xs font-bold tracking-wide">Ask AI Guide</span>
+    </button>
+</div>
+
+<!-- Smart AI Controller & Dynamic Position Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const wrapper = document.getElementById('aiAssistantWrapper');
+        const toggleBtn = document.getElementById('aiToggleBtn');
+        const closeBtn = document.getElementById('aiCloseBtn');
+        const chatBox = document.getElementById('aiChatBox');
+        const sendBtn = document.getElementById('aiSendBtn');
+        const userInput = document.getElementById('aiUserInput');
+        const chatMessages = document.getElementById('aiChatMessages');
+        const quickChips = document.querySelectorAll('.ai-quick-chip');
+
+        let userName = "";
+
+        // Dynamic Scroll Positioning Engine
+        window.addEventListener('scroll', function () {
+            const scrollPos = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const docHeight = document.body.offsetHeight;
+
+            // When scrolling near bottom, adjust position smoothly to bottom-right
+            if (scrollPos + windowHeight >= docHeight - 300) {
+                wrapper.classList.remove('top-24');
+                wrapper.classList.add('bottom-6');
+            } else {
+                wrapper.classList.remove('bottom-6');
+                wrapper.classList.add('top-24');
+            }
+        });
+
+        // Close / Minimize toggle actions
+        closeBtn.addEventListener('click', () => {
+            chatBox.classList.add('hidden');
+            toggleBtn.classList.remove('hidden');
+            toggleBtn.classList.add('flex');
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            chatBox.classList.remove('hidden');
+            toggleBtn.classList.add('hidden');
+            toggleBtn.classList.remove('flex');
+            userInput.focus();
+            scrollToBottom();
+        });
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 50);
+        }
+
+        function handleUserMessage(text) {
+            if (!text.trim()) return;
+
+            appendMessage(text, 'user');
+            userInput.value = '';
+
+            // Typing Indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'aiTyping';
+            typingDiv.className = 'flex items-center gap-2 text-slate-400 text-[11px] pl-9 py-1';
+            typingDiv.innerHTML = '<i class="fa-solid fa-spinner animate-spin text-indigo-400"></i> AI is thinking...';
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+
+            setTimeout(() => {
+                const typingElem = document.getElementById('aiTyping');
+                if (typingElem) typingElem.remove();
+
+                let reply = processSmartReply(text);
+                appendMessage(reply, 'ai');
+            }, 500);
+        }
+
+        function appendMessage(text, sender) {
+            const isUser = sender === 'user';
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = `flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`;
+            
+            bubbleDiv.innerHTML = `
+                <div class="w-7 h-7 rounded-full ${isUser ? 'bg-indigo-500 text-white' : 'bg-indigo-600 text-white'} flex items-center justify-center shrink-0 font-bold text-xs shadow-md">
+                    ${isUser ? '<i class="fa-solid fa-user text-[10px]"></i>' : 'AI'}
+                </div>
+                <div class="p-3.5 rounded-2xl ${isUser ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-800 text-slate-100 shadow-sm rounded-tl-none border border-slate-700/60'} max-w-[85%] leading-relaxed">
+                    ${text}
+                </div>
+            `;
+            chatMessages.appendChild(bubbleDiv);
+            scrollToBottom();
+        }
+
+        function processSmartReply(input) {
+            const text = input.trim();
+            const lower = text.toLowerCase();
+
+            // Name recognition pattern
+            if (lower.startsWith("my name is ") || lower.startsWith("i am ") || lower.startsWith("im ") || lower.startsWith("this is ")) {
+                const nameParts = text.split(/is |am |im |this is /i);
+                if (nameParts.length > 1) {
+                    userName = nameParts[1].trim().split(" ")[0];
+                    return `Nice to meet you, ${userName}! 😊 How can I assist you on Hireloop today? Are you looking for job opportunities or posting a vacancy?`;
+                }
+            }
+
+            // Greetings
+            if (lower === "hi" || lower === "hello" || lower === "hey" || lower === "hy") {
+                if (userName) {
+                    return `Hello ${userName}! 👋 What would you like to explore on Hireloop right now?`;
+                } else {
+                    return "Hello there! 👋 Welcome to Hireloop. What is your name, or how can I assist you with your job search today?";
+                }
+            }
+
+            // Job queries
+            if (lower.includes("job") || lower.includes("find") || lower.includes("search") || lower.includes("apply") || lower.includes("vacancy")) {
+                const namePrefix = userName ? `${userName}, ` : "";
+                return `${namePrefix}you can easily search for open positions using the main search bar on top, or head over to your Candidate Dashboard to view personalized matches! 🎯`;
+            }
+
+            // Recruiter queries
+            if (lower.includes("post") || lower.includes("hire") || lower.includes("recruiter") || lower.includes("candidate")) {
+                const namePrefix = userName ? `${userName}, ` : "";
+                return `${namePrefix}if you're hiring, log into your Recruiter Dashboard and click 'Post A New Job' to reach top candidate talent instantly! 💼`;
+            }
+
+            // Platform info
+            if (lower.includes("hireloop") || lower.includes("about") || lower.includes("what is this")) {
+                return "Hireloop is a next-generation career and internship portal connecting candidate talent with verified corporate recruiters and companies. 🚀";
+            }
+
+            if (userName) {
+                return `That's an interesting question, ${userName}! You can manage your applications, saved jobs, and recruiter messages seamlessly from your dashboard. Let me know if you need specific guidance!`;
+            }
+
+            return "Thanks for asking! Hireloop provides real-time job matching, candidate shortlisting, and dynamic recruiting analytics. Feel free to register or log in to get started!";
+        }
+
+        sendBtn.addEventListener('click', () => handleUserMessage(userInput.value));
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserMessage(userInput.value);
+        });
+
+        quickChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                handleUserMessage(chip.getAttribute('data-query'));
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Subtle cursor-driven parallax for the floating cards over the hero visual.
+  // Each card drifts a few pixels toward the cursor's position within the panel.
+  (function () {
+    var zone = document.getElementById('heroVisual');
+    if (!zone) return;
+    var cards = zone.querySelectorAll('.float-card');
+
+    zone.addEventListener('mousemove', function (e) {
+      var rect = zone.getBoundingClientRect();
+      var relX = (e.clientX - rect.left) / rect.width - 0.5;   // -0.5 .. 0.5
+      var relY = (e.clientY - rect.top) / rect.height - 0.5;
+
+      cards.forEach(function (card, i) {
+        var strength = 14 + (i % 3) * 6; // vary the depth slightly per card
+        var tx = relX * strength;
+        var ty = relY * strength;
+        card.style.transform = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px)';
+      });
+    });
+
+    zone.addEventListener('mouseleave', function () {
+      cards.forEach(function (card) { card.style.transform = 'translate(0,0)'; });
+    });
+  })();
+</script>
+{% endblock %}

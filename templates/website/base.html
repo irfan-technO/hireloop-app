@@ -1,0 +1,217 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Hireloop{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'assets/css/site.css' %}">
+  {% block extra_css %}{% endblock %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-nav">
+      <a href="/" class="site-logo">
+        <span class="site-logo-mark">H</span>
+        Hireloop
+      </a>
+
+      <ul class="site-links">
+        <li><a href="/" class="{% block nav_home %}{% endblock %}">Home</a></li>
+        <li><a href="/about-us/" class="{% block nav_about %}{% endblock %}">About Us</a></li>
+        <li><a href="/contact/" class="{% block nav_contact %}{% endblock %}">Contact</a></li>
+      </ul>
+
+      <div class="site-actions">
+        {% if user.is_authenticated %}
+          <a href="{% url "login" %}" class="hl-btn hl-btn--solid">Login</a>
+        {% else %}
+          <a href="/accounts/login/" class="hl-btn hl-btn--solid">Dashboard</a>
+        {% endif %}
+        <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            <span class="site-logo-mark">H</span>
+            Hireloop
+          </div>
+          <p class="footer-about">
+            Hireloop connects candidates with the roles they're looking for, and
+            helps employers find the right people, faster.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="/about-us/">About Us</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Candidates</h5>
+          <ul>
+            <li><a href="/accounts/register_candidate/">Create Account</a></li>
+            <li><a href="/accounts/login/">Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Employers</h5>
+          <ul>
+            <li><a href="/accounts/register_recruiter/">Post a Job</a></li>
+            <li><a href="/accounts/login/">Login</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; {% now "Y" %} Hireloop. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+
+ <!-- iOS Fluid Interface & Cursor Tracking Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 1. RE-TRIGGERABLE SCROLL ANIMATIONS (Animates every time you scroll up/down)
+    const reveals = document.querySelectorAll(".reveal, .category-card, .job-card, section");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("active");
+        } else {
+          // Removes active class so animation re-triggers on scroll back
+          entry.target.classList.remove("active");
+        }
+      });
+    }, {
+      threshold: 0.15
+    });
+
+    reveals.forEach(el => {
+      el.classList.add("reveal");
+      observer.observe(el);
+    });
+
+    // 2. CURSOR MOVEMENT REACTIVITY FOR TEXT & CARDS
+    const interactiveElements = document.querySelectorAll("h1, h2, .category-card, .job-card, .step-card, .hl-btn, .float-card");
+
+    document.addEventListener("mousemove", (e) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      // Subtle parallax tilt on main headings as cursor moves across screen
+      const moveX = (clientX - centerX) / 60;
+      const moveY = (clientY - centerY) / 60;
+
+      document.querySelectorAll("h1, h2").forEach(heading => {
+        heading.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+      });
+    });
+
+    // 3. FLUID CARD MAGNET & GLOW EFFECT ON CURSOR HOVER
+    interactiveElements.forEach(card => {
+      card.classList.add("fluid-glow");
+
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+
+        // Subtle 3D Tilt Effect
+        const tiltX = (y - rect.height / 2) / 12;
+        const tiltY = (rect.width / 2 - x) / 12;
+        card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
+    });
+  });
+</script>
+
+<!-- Video-style Search & Apply Animation Simulation -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const typingTextEl = document.querySelector(".typing-text");
+    const progressBar = document.querySelector(".animated-progress-bar");
+    const statusBadge = document.querySelector(".status-badge");
+
+    if (!typingTextEl) return;
+
+    const phrases = ["Python Developer", "UI/UX Designer", "Data Analyst", "Marketing Manager"];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    // Typing Loop Function
+    function typeEffect() {
+      const currentPhrase = phrases[phraseIndex];
+
+      if (isDeleting) {
+        typingTextEl.textContent = currentPhrase.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typingTextEl.textContent = currentPhrase.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      let typeSpeed = isDeleting ? 40 : 80;
+
+      if (!isDeleting && charIndex === currentPhrase.length) {
+        typeSpeed = 1500; // Pause after typing word
+        isDeleting = true;
+        triggerApplyAnimation(); // Trigger application progress
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        typeSpeed = 500;
+      }
+
+      setTimeout(typeEffect, typeSpeed);
+    }
+
+    // Simulated "Applying Job" progress bar
+    function triggerApplyAnimation() {
+      progressBar.style.width = "0%";
+      statusBadge.textContent = "Applying...";
+      statusBadge.style.color = "#334155";
+
+      setTimeout(() => {
+        progressBar.style.width = "100%";
+        setTimeout(() => {
+          statusBadge.textContent = "✓ Application Submitted!";
+          statusBadge.style.color = "#ffffff";
+        }, 300);
+      }, 400);
+    }
+
+    typeEffect();
+  });
+</script>
+</body>
+</html>

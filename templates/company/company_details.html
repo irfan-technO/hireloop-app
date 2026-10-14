@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{%load humanize%}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 px-4 space-y-8">
+
+  <!-- Liquid Glass Header Card -->
+  <div class="relative overflow-hidden rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border border-white/20 dark:border-slate-800/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] p-8">
+    <div class="absolute -top-24 -left-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      
+      <!-- Company Brand Info -->
+      <div class="flex items-center gap-5">
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl font-extrabold shadow-lg shadow-indigo-500/20 ring-4 ring-white/50 dark:ring-slate-800/50">
+          {{ company.name|slice:":1"|upper }}
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex items-center gap-3">
+            <h1 class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white">{{ company.name }}</h1>
+            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 backdrop-blur-md">
+              {{ company.primary_industry }}
+            </span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+            {% if company.state or company.country %}
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-indigo-500"></i> {{ company.state }}{% if company.state and company.country %}, {% endif %}{{ company.country }}</span>
+            {% endif %}
+            
+            {% if company.phone_number %}
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-indigo-500"></i> {{ company.phone_number }}</span>
+            {% endif %}
+
+            {% if company.email_address %}
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-envelope text-indigo-500"></i> {{ company.email_address }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+       <div class="flex items-center gap-3 w-full md:w-auto">
+        {% if request.user.is_recruiter %}
+        <!-- Shown only to Recruiters -->
+        <a href="{% url 'update-company' company.pk %}" class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-lg transition-all duration-200 active:scale-95">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Update Info</span>
+        </a>
+       {% endif %}
+       </div>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- Main Detail Column -->
+    <div class="lg:col-span-2 space-y-8">
+      
+      <!-- About Company Glass Card -->
+      <div class="rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border border-white/20 dark:border-slate-800/50 p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.05)]">
+        <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-indigo-500"></i>
+          About Company
+        </h3>
+        <p class="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
+          {{ company.about_company|default:"No description available." }}
+        </p>
+      </div>
+
+      <!-- Active Job Listings Block -->
+      <div class="rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border border-white/20 dark:border-slate-800/50 p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.05)]">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-briefcase text-indigo-500"></i>
+            Jobs at {{ company.name }}
+          </h3>
+          <span class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-200/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 border border-white/20">
+            {{ company.job_set.all.count }} Posted
+          </span>
+        </div>
+
+        {% if company.job_set.all %}
+          <div class="space-y-4">
+            {% for job in company.job_set.all %}
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-white/30 dark:bg-slate-800/30 border border-white/10 dark:border-slate-700/30 backdrop-blur-md hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all">
+                <div>
+                  <h4 class="font-semibold text-slate-800 dark:text-white">{{ job.title }}</h4>
+                  <p class="text-xs text-slate-500">{{ job.job_type }}  </p>
+                  <p class="text-xs text-slate-500">  {{ job.job_location }} </p>
+                  <p class="text-xs text-slate-500">{{ job.date_time_posted|naturaltime }}</p>
+                </div>
+                <a href={% url "job-details" job.pk %} class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-indigo-500 hover:text-white text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all">View Role</a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-8 text-slate-500 text-sm">
+            No active job openings posted yet.
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- Sidebar Overview Glass Card -->
+    <div class="space-y-6">
+      <div class="rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border border-white/20 dark:border-slate-800/50 p-6 shadow-[0_8px_32px_0_rgba(31,38,135,0.05)] space-y-6">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white border-b border-slate-200/50 dark:border-slate-800/50 pb-3">Company Overview</h3>
+
+        <div class="space-y-4 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 dark:text-slate-400">Primary Industry</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200">{{ company.primary_industry }}</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 dark:text-slate-400">Company Size</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200">{{ company.company_size }} Employees</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 dark:text-slate-400">Founded In</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200">{{ company.founded_in }}</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 dark:text-slate-400">Phone</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200">{{ company.phone_number }}</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 dark:text-slate-400">Email</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[150px]">{{ company.email_address }}</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 dark:text-slate-400">Location</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200">{{ company.state }}, {{ company.country }}</span>
+          </div>
+
+          {% if company.website %}
+          <div class="pt-2 border-t border-slate-200/50 dark:border-slate-800/50">
+            <span class="text-slate-500 dark:text-slate-400 block mb-1">Website</span>
+            <a href="{{ company.website }}" target="_blank" class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline truncate block">
+              {{ company.website }}
+            </a>
+          </div>
+          {% endif %}
+
+          {% if company.linkedin or company.twitter %}
+          <div class="pt-2 border-t border-slate-200/50 dark:border-slate-800/50">
+            <span class="text-slate-500 dark:text-slate-400 block mb-2">Social Profiles</span>
+            <div class="flex items-center gap-3">
+              {% if company.linkedin %}
+                <a href="{{ company.linkedin }}" target="_blank" class="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
+                  <i class="fa-brands fa-linkedin-in text-base"></i>
+                </a>
+              {% endif %}
+              {% if company.twitter %}
+                <a href="{{ company.twitter }}" target="_blank" class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all">
+                  <i class="fa-brands fa-x-twitter text-base"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

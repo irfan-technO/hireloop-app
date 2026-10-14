@@ -1,0 +1,268 @@
+{% extends "website/base.html" %}
+{% load static %}
+
+{% block title %}About Us | Hireloop{% endblock %}
+
+{% block content %}
+<!-- Include Tailwind directly inside the content block so it loads without needing base.html changes -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: "#eef2ff",
+            100: "#e0e7ff",
+            500: "#6366f1",
+            600: "#4f46e5",
+            700: "#4338ca",
+          },
+        },
+      },
+    },
+  };
+</script>
+<style>
+  @keyframes chromeMorph {
+    0%   { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(0deg); }
+    25%  { border-radius: 40% 60% 70% 30% / 50% 60% 30% 50%; transform: rotate(2deg); }
+    50%  { border-radius: 70% 30% 50% 50% / 30% 70% 50% 70%; transform: rotate(-2deg); }
+    75%  { border-radius: 30% 70% 40% 60% / 60% 40% 60% 40%; transform: rotate(1deg); }
+    100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(0deg); }
+  }
+
+  .morphing-blob {
+    animation: chromeMorph 12s ease-in-out infinite;
+    will-change: border-radius, transform;
+  }
+</style>
+
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+  <!-- Page Header -->
+  <div class="relative w-full overflow-hidden min-h-screen">
+  
+  <!-- Background Video for About Us Page -->
+  <video class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none" autoplay loop muted playsinline>
+    <source src="{% static 'assets/video/about_bg.mp4' %}" type="video/mp4">
+  </video>
+  
+  <!-- Glass Layer for Text Readability -->
+  <div class="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-white/70 to-slate-50/90 dark:from-slate-950/80 dark:via-slate-900/70 dark:to-slate-950/90 pointer-events-none"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+    <!-- Page Header -->
+    <div class="text-center py-6 bg-white/70 dark:bg-slate-900/70 rounded-2xl backdrop-blur-md border border-slate-200/50 dark:border-slate-800 shadow-sm">
+      <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">About Us</h1>
+      <p class="mt-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+        <a href="/" class="hover:text-indigo-600 transition-colors">Home</a>
+        <span class="mx-2 text-slate-400">/</span>
+        <span>About Us</span>
+      </p>
+    </div>
+    
+  <!-- Animated Counter Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="p-8 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-md text-center transform hover:-translate-y-1 transition-all duration-300">
+      <div class="text-4xl sm:text-5xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+        <span class="counter" data-target="{{ stat_users|default:'120000' }}">0</span><span class="text-indigo-600">+</span>
+      </div>
+      <div class="text-sm font-semibold text-slate-600 dark:text-slate-400 mt-3">Active Job Seekers</div>
+    </div>
+
+    <div class="p-8 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-md text-center transform hover:-translate-y-1 transition-all duration-300">
+      <div class="text-4xl sm:text-5xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+        <span class="counter" data-target="{{ stat_jobs|default:'8500' }}">0</span>
+      </div>
+      <div class="text-sm font-semibold text-slate-600 dark:text-slate-400 mt-3">Open Job Postings</div>
+    </div>
+
+    <div class="p-8 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-md text-center transform hover:-translate-y-1 transition-all duration-300">
+      <div class="text-4xl sm:text-5xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+        <span class="counter" data-target="{{ stat_companies|default:'1200' }}">0</span><span class="text-indigo-600">+</span>
+      </div>
+      <div class="text-sm font-semibold text-slate-600 dark:text-slate-400 mt-3">Companies Hiring</div>
+    </div>
+  </div>
+  <div class="space-y-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Built for Modern Hiring</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">Connecting high-performing candidates with verified companies across every industry.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white/80 dark:bg-slate-900/80 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/60 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-5 font-bold">
+            <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Verified Openings</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Every job posting is vetted to guarantee genuine positions and active recruitment teams.</p>
+        </div>
+
+        <div class="bg-white/80 dark:bg-slate-900/80 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/60 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-5 font-bold">
+            <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Instant Application Tracking</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Track your application stages in real-time without guessing where your resume stands.</p>
+        </div>
+
+        <div class="bg-white/80 dark:bg-slate-900/80 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/60 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-5 font-bold">
+            <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Data Privacy & Security</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Your personal information and job search preferences remain confidential and secure.</p>
+        </div>
+      </div>
+    </div>
+
+  <!-- About Content & Video Showcase Container -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/70 dark:bg-slate-900/70 p-8 sm:p-10 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-xl backdrop-blur-md">
+    <div class="space-y-5 text-slate-600 dark:text-slate-300 leading-relaxed">
+      <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">About Hireloop</h2>
+      <p>Hireloop started with a simple frustration: job boards were either cluttered with irrelevant listings or locked behind clunky sign-up flows before you could see a single posting. We built Hireloop to strip that away — search first, sign up when you're ready.</p>
+      <p>On the other side, we work with hiring teams who are tired of sorting through hundreds of resumes for roles that need five strong candidates, not five hundred applicants. Our tools help recruiters post a role, screen candidates, and move fast without losing the people who are actually a good fit.</p>
+      <p>Whether you're looking for your next role or your next hire, Hireloop is built to get you there with less friction and less noise.</p>
+    </div>
+
+    <!-- Video Showcase Circle -->
+   <!-- Google Chrome-Style Morphing Video Showcase -->
+<div class="flex flex-col items-center justify-center relative my-4">
+  <style>
+    @keyframes chromeMorph {
+      0% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        transform: scale(1) rotate(0deg);
+      }
+      25% {
+        border-radius: 40% 60% 70% 30% / 50% 60% 30% 50%;
+        transform: scale(1.02) rotate(3deg);
+      }
+      50% {
+        border-radius: 70% 30% 50% 50% / 30% 70% 50% 70%;
+        transform: scale(0.98) rotate(-2deg);
+      }
+      75% {
+        border-radius: 30% 70% 40% 60% / 60% 40% 60% 40%;
+        transform: scale(1.01) rotate(1deg);
+      }
+      100% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    .chrome-morph-container {
+      animation: chromeMorph 12s ease-in-out infinite;
+      transition: all 0.5s ease-out;
+      will-change: border-radius, transform;
+    }
+  </style>
+
+  <!-- Animated Morphing Wrapper -->
+  <div class="chrome-morph-container w-80 h-80 sm:w-[420px] sm:h-[420px] overflow-hidden shadow-2xl relative bg-indigo-50 border-4 border-indigo-500/20">
+    <video id="aboutVideo" class="w-full h-full object-cover scale-110" autoplay loop muted playsinline>
+    <source src="{% static 'assets/video/about_showcase.mp4' %}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- Pause/Play Toggle Button (matching Chrome style) -->
+  <button id="videoPauseBtn" onclick="toggleVideoPlayback()" class="mt-4 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-full transition-all">
+    <svg id="pauseIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+    </svg>
+    <svg id="playIcon" class="w-3.5 h-3.5 fill-current hidden" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7z"/>
+    </svg>
+    <span id="btnText">Pause video</span>
+  </button>
+
+  <script>
+    function toggleVideoPlayback() {
+      const video = document.getElementById('aboutVideo');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const playIcon = document.getElementById('playIcon');
+      const btnText = document.getElementById('btnText');
+
+      if (video.paused) {
+        video.play();
+        pauseIcon.classList.remove('hidden');
+        playIcon.classList.add('hidden');
+        btnText.innerText = "Pause video";
+      } else {
+        video.pause();
+        pauseIcon.classList.add('hidden');
+        playIcon.classList.remove('hidden');
+        btnText.innerText = "Play video";
+      }
+    }
+  </script>
+ </div>
+ 
+
+  <!-- How It Works Section -->
+  
+    
+</div>
+
+  <!-- Call To Action Banner -->
+  <div class="py-12 px-8 bg-gradient-to-r from-indigo-600 to-indigo-800 text-white rounded-3xl text-center shadow-2xl my-8">
+    <h2 class="text-3xl font-black mb-3">Your Dream Jobs Are Waiting</h2>
+    <p class="text-indigo-100 text-sm mb-6 max-w-xl mx-auto">Over 100,000 interactions, 50,000 success stories. Make yours now.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="{% url 'available_jobs'%}" class="px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:bg-indigo-50 transition-all transform hover:-translate-y-0.5">Search Job</a>
+      <a href="{% url 'register_candidate' %}" class="px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl shadow-lg hover:bg-amber-300 transition-all transform hover:-translate-y-0.5">Apply Job Now</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Number Counter Animation Script -->
+ 
+<script>
+  
+  function toggleVideoPlayback() {
+    const video = document.getElementById('aboutVideo');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const playIcon = document.getElementById('playIcon');
+    const btnText = document.getElementById('btnText');
+
+    if (video.paused) {
+      video.play();
+      pauseIcon.classList.remove('hidden');
+      playIcon.classList.add('hidden');
+      btnText.innerText = "Pause video";
+    } else {
+      video.pause();
+      pauseIcon.classList.add('hidden');
+      playIcon.classList.remove('hidden');
+      btnText.innerText = "Play video";
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const counters = document.querySelectorAll('.counter');
+    const speed = 80;
+
+    counters.forEach(counter => {
+      const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText.replace(/,/g, '');
+        const inc = Math.max(1, Math.ceil(target / speed));
+
+        if (count < target) {
+          counter.innerText = Math.min(target, count + inc).toLocaleString();
+          setTimeout(updateCount, 20);
+        } else {
+          counter.innerText = target.toLocaleString();
+        }
+      };
+      updateCount();
+    });
+  });
+</script>
+{% endblock %}

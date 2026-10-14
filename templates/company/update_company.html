@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+    <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Update Company Information</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+          Please check the fields below. Errors: {{ form.errors }}
+        </div>
+      {% endif %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Company Name -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Company Name</label>
+          {% render_field form.name class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- Email Address -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Email ID</label>
+          {% render_field form.email_address class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Phone Number</label>
+          {% render_field form.phone_number class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- Website -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Website</label>
+          {% render_field form.website class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://example.com" %}
+        </div>
+
+        <!-- Primary Industry -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Primary Industry</label>
+          {% render_field form.primary_industry class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- Company Size -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Company Size</label>
+          {% render_field form.company_size class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- Est. Since -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Est. Since</label>
+          {% render_field form.founded_in class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- State -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">State</label>
+          {% render_field form.state class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- Country -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Country</label>
+          {% render_field form.country class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+        </div>
+
+        <!-- LinkedIn -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">LinkedIn</label>
+          {% render_field form.linkedin class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://linkedin.com/in/..." %}
+        </div>
+
+        <!-- Twitter -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Twitter</label>
+          {% render_field form.twitter class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://twitter.com/..." %}
+        </div>
+      </div>
+
+      <!-- About Company -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">About Company</label>
+        {% render_field form.about_company rows="4" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" %}
+      </div>
+
+      <button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-md transition-all">
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

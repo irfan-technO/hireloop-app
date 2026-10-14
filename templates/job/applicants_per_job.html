@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">Applicants</h2>
+
+    <!-- Clean Header Banner matching image_1d0d64.png -->
+    <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-5 sm:p-6 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-slate-100 dark:border-slate-800">
+        <div>
+            <h1 class="text-base sm:text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                {{ job.title }}
+            </h1>
+        </div>
+
+        <!-- Metric Counts -->
+        <div class="flex items-center gap-6 text-xs sm:text-sm font-medium">
+            <span class="text-slate-600 dark:text-slate-300">
+                Total(s): <strong class="text-slate-900 dark:text-white font-bold">{{ total }}</strong>
+            </span>
+            <span class="text-emerald-600 dark:text-emerald-400">
+                Approved: <strong class="font-bold">{{ approved }}</strong>
+            </span>
+            <span class="text-rose-600 dark:text-rose-400">
+                Rejected(s): <strong class="font-bold">{{ rejected }}</strong>
+            </span>
+        </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <form method="GET" class="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+        
+        <!-- Search Input -->
+        <div class="relative flex-1 min-w-[200px]">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search candidates..." 
+                   class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <svg class="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <!-- Date Filter Dropdown -->
+            <select name="date_range" onchange="this.form.submit()" 
+                    class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="all" {% if current_date == 'all' %}selected{% endif %}>All Time</option>
+                <option value="today" {% if current_date == 'today' %}selected{% endif %}>Applied Today</option>
+                <option value="7_days" {% if current_date == '7_days' %}selected{% endif %}>Last 7 Days</option>
+                <option value="30_days" {% if current_date == '30_days' %}selected{% endif %}>Last 30 Days</option>
+            </select>
+
+            <!-- Status Filter Dropdown -->
+            <select name="status" onchange="this.form.submit()" 
+                    class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="all" {% if current_status == 'all' %}selected{% endif %}>All Statuses</option>
+                <option value="Pending" {% if current_status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Accepted" {% if current_status == 'Accepted' %}selected{% endif %}>Approved</option>
+                <option value="Declined" {% if current_status == 'Declined' %}selected{% endif %}>Rejected</option>
+            </select>
+
+            {% if search_query or current_status != 'all' or current_date != 'all' %}
+                <a href="{% url 'applicants_per_job' job.pk %}" class="px-3 py-2 text-xs text-rose-500 hover:text-rose-700 font-medium">Reset</a>
+            {% endif %}
+        </div>
+       
+    </form>
+
+    <!-- Applicant Cards Layout matching image_1d0d64.png -->
+    <div class="space-y-4">
+        {% for app in applicants %}
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition-shadow">
+            
+            <div class="flex items-center gap-4">
+                {% if app.resume.profile_picture %}
+                    <img src="{{ app.resume.profile_picture.url }}" alt="Profile" class="w-14 h-14 rounded-full object-cover">
+                {% else %}
+                    <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-base font-bold">
+                        {{ app.resume.user.first_name|slice:":1"|default:"U" }}
+                    </div>
+                {% endif %}
+
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">
+                        {{ app.resume.user.get_full_name|default:app.resume.user.username }}
+                    </h3>
+                    
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-400">
+                        <span class="flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                            {{ app.resume.location|default:"Not specified" }}
+                        </span>
+                        <span>•</span>
+                        <span>Applied {{ app.date_applied|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons matching screenshot style -->
+            <div class="flex items-center gap-2 self-end sm:self-center">
+               <a href="{% url 'resume-details' app.resume.pk %}" class="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors" title="View Profile">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+</a>
+
+{% if app.status != 'Accepted' %}
+<!-- Line 105: Accept -->
+<a href="{% url 'accept_application' app.pk %}" class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 transition-colors" title="Approve">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+</a>
+{% endif %}
+
+{% if app.status != 'Declined' %}
+<!-- Line 111: Reject -->
+<a href="{% url 'reject_application' app.pk %}" class="p-2 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors" title="Reject">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</a>
+{% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="py-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+            <p class="text-xs text-slate-400">No applicants matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

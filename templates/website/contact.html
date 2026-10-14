@@ -1,0 +1,118 @@
+
+{% extends "website/base.html" %}
+
+{% block title %}Contact | Hireloop{% endblock %}
+{% block nav_contact %}active{% endblock %}
+
+{% block content %}
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <div class="crumbs"><a href="/">Home</a><span class="sep">/</span>Contact</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h4>Address</h4>
+          <p>{{ contact_address|default:"329 Queensberry Street, Melbourne, Australia" }}</p>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L7.9 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z"/></svg>
+          </div>
+          <h4>Call Us</h4>
+          <p><a href="tel:{{ contact_phone|default:'+1234567890' }}">{{ contact_phone|default:"123 456 7890" }}</a></p>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          </div>
+          <h4>Email</h4>
+          <p><a href="mailto:{{ contact_email|default:'hello@hireloop.com' }}">{{ contact_email|default:"hello@hireloop.com" }}</a></p>
+        </div>
+      </div>
+
+      <!--
+        OPTIONAL MAP: to add a real map without needing a Google API key, use
+        Google Maps' free "Embed a map" link (Maps -> Share -> Embed a map ->
+        copy the <iframe> src) and drop it in below. Example:
+
+        <iframe src="https://www.google.com/maps/embed?pb=YOUR_EMBED_CODE"
+                width="100%" height="360" style="border:0;border-radius:14px;"
+                allowfullscreen loading="lazy"></iframe>
+      -->
+
+      <div class="contact-form-wrap">
+        <h2>Leave A Message</h2>
+        <!-- Success / Error Message Banner -->
+<!-- Tailwind Styled Message Banner -->
+{% if messages %}
+    <div class="mb-6 space-y-3">
+        {% for message in messages %}
+            <div class="flex items-center gap-3 p-4 text-sm rounded-2xl border shadow-sm transition-all animate-fade-in
+                        {% if message.tags == 'success' %}
+                            bg-emerald-50/80 text-emerald-800 border-emerald-200/60
+                        {% elif message.tags == 'warning' %}
+                            bg-amber-50/80 text-amber-800 border-amber-200/60
+                        {% else %}
+                            bg-rose-50/80 text-rose-800 border-rose-200/60
+                        {% endif %}">
+                
+                <!-- Icon -->
+                {% if message.tags == 'success' %}
+                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                {% else %}
+                    <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                {% endif %}
+
+                <!-- Message Text -->
+                <span class="font-medium tracking-tight">{{ message }}</span>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+        <form method="post" action="/contact/">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-field">
+              <label for="id_name">Full Name</label>
+              <input type="text" id="id_name" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-field">
+              <label for="id_email">Email Address</label>
+              <input type="email" id="id_email" name="email" placeholder="you@example.com" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="id_subject">Subject</label>
+            <input type="text" id="id_subject" name="subject" placeholder="Subject" required>
+          </div>
+
+          <div class="form-field">
+            <label for="id_message">Your Message</label>
+            <textarea id="id_message" name="message" placeholder="Write your message..." required></textarea>
+          </div>
+
+          <button type="submit" class="hl-btn hl-btn--solid" style="width:100%; padding:15px;">Send Message</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+{% endblock %}
