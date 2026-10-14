@@ -385,21 +385,38 @@
         }
       });
 
-      const mobileSidebarToggle = document.getElementById(
-        "mobile-sidebar-toggle",
-      );
-      const sidebar = document.getElementById("sidebar");
-      const sidebarBackdrop = document.getElementById("sidebar-backdrop");
-      function toggleSidebar() {
-        sidebar.classList.toggle("-translate-x-full");
-        if (sidebarBackdrop.classList.contains("hidden")) {
-          sidebarBackdrop.classList.remove("hidden");
-          setTimeout(() => sidebarBackdrop.classList.remove("opacity-0"), 10);
-        } else {
-          sidebarBackdrop.classList.add("opacity-0");
-          setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
-        }
-      }
+      // Robust mobile sidebar toggle selector
+const mobileSidebarToggle = document.getElementById("mobile-sidebar-toggle") || document.querySelector(".mobile-menu-btn") || document.querySelector("header button:last-child");
+const sidebar = document.getElementById("sidebar");
+const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+
+function toggleSidebar() {
+  if (!sidebar) return;
+  const isHidden = sidebar.classList.contains("hidden");
+  
+  if (isHidden) {
+    sidebar.classList.remove("hidden");
+    sidebar.classList.add("fixed", "inset-y-0", "left-0", "z-50", "w-64", "flex");
+    if (sidebarBackdrop) {
+      sidebarBackdrop.classList.remove("hidden");
+      setTimeout(() => sidebarBackdrop.classList.remove("opacity-0"), 10);
+    }
+  } else {
+    sidebar.classList.add("hidden");
+    sidebar.classList.remove("fixed", "inset-y-0", "left-0", "z-50", "w-64", "flex");
+    if (sidebarBackdrop) {
+      sidebarBackdrop.classList.add("opacity-0");
+      setTimeout(() => sidebarBackdrop.classList.add("hidden"), 300);
+    }
+  }
+}
+
+if (mobileSidebarToggle) {
+  mobileSidebarToggle.addEventListener("click", toggleSidebar);
+}
+if (sidebarBackdrop) {
+  sidebarBackdrop.addEventListener("click", toggleSidebar);
+}
 
       mobileSidebarToggle.addEventListener("click", toggleSidebar);
       sidebarBackdrop.addEventListener("click", toggleSidebar);
