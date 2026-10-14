@@ -224,45 +224,5 @@
 
 <!-- Number Counter Animation Script -->
  
-<script>
-  
-  function toggleVideoPlayback() {
-    const video = document.getElementById('aboutVideo');
-    const pauseIcon = document.getElementById('pauseIcon');
-    const playIcon = document.getElementById('playIcon');
-    const btnText = document.getElementById('btnText');
 
-    if (video.paused) {
-      video.play();
-      pauseIcon.classList.remove('hidden');
-      playIcon.classList.add('hidden');
-      btnText.innerText = "Pause video";
-    } else {
-      video.pause();
-      pauseIcon.classList.add('hidden');
-      playIcon.classList.remove('hidden');
-      btnText.innerText = "Play video";
-    }
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    const counters = document.querySelectorAll('.counter');
-    const speed = 80;
-
-    counters.forEach(counter => {
-      const updateCount = () => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText.replace(/,/g, '');
-        const inc = Math.max(1, Math.ceil(target / speed));
-
-        if (count < target) {
-          counter.innerText = Math.min(target, count + inc).toLocaleString();
-          setTimeout(updateCount, 20);
-        } else {
-          counter.innerText = target.toLocaleString();
-        }
-      };
-      updateCount();
-    });
-  });
-</script>
 {% endblock %}
