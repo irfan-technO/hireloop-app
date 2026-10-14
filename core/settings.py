@@ -1,3 +1,5 @@
+
+
 """
 Django settings for core project.
 
@@ -133,20 +135,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 ALLOWED_HOSTS = ['*']
 
-
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
+        'BACKEND': os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend'),
+        'OPTIONS': {
+            'host': os.environ.get('EMAIL_HOST', 'smtp.gmail.com'),
+            'port': int(os.environ.get('EMAIL_PORT', 587)),
+            'use_tls': os.environ.get('EMAIL_USE_TLS', 'True') == 'True',
+            'username': os.environ.get('EMAIL_HOST_USER', ''),
+            'password': os.environ.get('EMAIL_HOST_PASSWORD', ''),
+        },
+    }
 }
 
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Hireloop <irfannadaf6060@gmail.com>')
 AUTH_USER_MODEL = "accounts.User"
